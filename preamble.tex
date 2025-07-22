@@ -1,0 +1,67 @@
+%------------------------- Preamble (beamer) -------------------------%
+%   Require LuaLaTeX + --shell-escape (for minted)                    %
+%--------------------------------------------------------------------%
+\usepackage[spanish]{babel}
+
+% ---------- Fonts (modern look) ----------
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX, Scale=MatchLowercase}
+\setmainfont{Inter}       % Sans‑serif body (install ttf–Inter)
+\setsansfont{Inter}
+\setmonofont{Fira Code}   % Nice mono for code
+
+% ---------- Theme ----------
+\usetheme[
+  titleformat=smallcaps,
+  numbering=fraction,
+  progressbar=frametitle   % thin progress line under the title
+]{metropolis}              % modern beamer theme
+\metroset{block=fill}      % coloured blocks
+
+% ---------- Colours ----------
+\definecolor{clblue}{HTML}{005F9E}
+\definecolor{clorange}{HTML}{FF9130}
+\definecolor{clgrey}{HTML}{F4F4F4}
+
+% ---------- minted ----------
+\usepackage{minted}
+\setminted{
+  fontsize=\footnotesize,
+  autogobble,
+  breaklines,
+  tabsize=2,
+  style=monokai,
+  linenos
+}
+
+% ---------- Custom boxes (tcolorbox) ----------
+\usepackage{tcolorbox}
+\tcbuselibrary{skins, breakable}
+% Warning box
+\newtcolorbox{warnbox}{
+  colback=clorange!10,
+  colframe=clorange!80!black,
+  breakable,
+  title={\faWarning\quad Advertencia},
+  fonttitle=\bfseries,
+  left=2mm, right=2mm, top=1mm, bottom=1mm
+}
+% Information box
+\newtcolorbox{infobox}{
+  colback=clblue!5,
+  colframe=clblue!60!black,
+  breakable,
+  title={\faInfoCircle\quad Nota},
+  fonttitle=\bfseries,
+  left=2mm, right=2mm, top=1mm, bottom=1mm
+}
+
+% ---------- Icons ----------
+\usepackage{fontawesome5}
+
+% ---------- Misc tweaks ----------
+\graphicspath{{figures/}}
+\setlength{\parskip}{0.5em}
+\addto\extrasspanish{\renewcommand{\contentsname}{Índice}}
+%--------------------------------------------------------------------%
+
