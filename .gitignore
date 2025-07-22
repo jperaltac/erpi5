@@ -1,0 +1,21 @@
+# Compiled LaTeX files
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.synctex.gz
+*_minted*
+*.fdb_latexmk
+*.fls
+*.pdf
+
+# MacOS and editor files
+.DS_Store
+*~
+
+# Build directories
+build/
+
