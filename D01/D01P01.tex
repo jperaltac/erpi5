@@ -1,0 +1,128 @@
+% !TEX program = lualatex
+\documentclass[aspectratio=169, professionalfonts]{beamer}
+\usepackage[spanish]{babel}
+\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage{mwe}            % imágenes de ejemplo
+\usepackage{xcolor}
+\usepackage{emoji}
+\setmainfont{Libertinus Serif}
+
+\title[ClústerLab • Día 1]{ClústerLab 2025\\\huge Introducción y Motivación}
+\subtitle{Escuela de Computación Distribuida – ITM Medellín}
+\author{Equipo docente ClústerLab}
+\date{4 de agosto 2025}
+
+%--------------------------------------------------------------------
+\begin{document}
+
+%------------------------ title -------------------------------------
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+%------------------------ objetivos ---------------------------------
+\begin{frame}{Objetivos del curso}
+  \begin{itemize}
+    \item ¿Qué es un \emph{clúster}? ¿Por qué importa?
+    \item Configurar un mini-clúster con Raspberry Pi 5.
+    \item Fundamentos de Linux, scripting Bash y redes.
+    \item Programación paralela (MPI) y proyecto final.
+  \end{itemize}
+\end{frame}
+
+%------------------------ qué es un clúster -------------------------
+\begin{frame}{¿Qué es un clúster?}
+  \begin{columns}[T]
+    \begin{column}{0.55\textwidth}
+      \begin{block}{Definición rápida}
+        Conjunto de computadores interconectados que actúan
+        como un único recurso de cómputo.
+      \end{block}
+      \pause
+      \begin{itemize}
+        \item Alta disponibilidad y escalabilidad \emoji{chart-increasing}
+        \item Paralelismo y balanceo de carga
+        \item Ciencia de datos, simulaciones, IA …
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{example-image} % imagen genérica
+    \end{column}
+  \end{columns}
+\end{frame}
+
+%------------------------ por qué raspberry -------------------------
+\begin{frame}{¿Por qué Raspberry Pi 5?}
+  \begin{itemize}
+    \item Bajo costo y consumo $\approx$ 5–7 W.
+    \item Soporte completo Linux + comunidad enorme.
+    \item Perfecta para aprender HPC en pequeño.
+    \item ¡Te la llevas a casa! \emoji{rocket}
+  \end{itemize}
+  \vspace{0.4em}
+  \centering
+  \includegraphics[width=0.7\linewidth]{example-image-duck} % otra imagen demo
+\end{frame}
+
+%------------------------ agenda del día ----------------------------
+\begin{frame}{Agenda Día 1 (09:00–13:00)}
+  \begin{enumerate}
+    \item 09:00 – 09:15  Bienvenida y motivación.
+    \item 09:15 – 10:30  Encender la Pi + primeros comandos Linux.
+    \item 10:45 – 12:00  Bash I (variables, redirección).
+    \item 12:00 – 13:00  Actividad: árbol de carpetas + backup.
+  \end{enumerate}
+\end{frame}
+
+%------------------------ requisitos -------------------------------
+\begin{frame}{Requisitos para hoy}
+  \begin{itemize}
+    \item Laptop con Wi-Fi y cliente SSH (Linux/macOS) \textbf{o} WSL 2 en Windows.
+    \item Raspberry Pi 5 con SD Card (≥16 GB) y fuente.
+    \item Cable LAN y acceso al switch del aula.
+  \end{itemize}
+  \alert{En Windows usa \textbf{WSL 2 + Ubuntu}.}
+\end{frame}
+
+%------------------------ WSL --------------------------------------
+\begin{frame}{WSL 2 en Windows (instalación rápida)}
+  \begin{enumerate}
+    \item Activar «Sub-sistema Windows para Linux» y «Plataforma VM».
+    \item En PowerShell (Admin): \texttt{wsl --install Ubuntu}
+    \item Reiniciar, abrir Ubuntu WSL y crear usuario.
+    \item Instalar \texttt{openssh-client}:\newline
+          \texttt{\$ sudo apt install openssh-client}
+  \end{enumerate}
+  \pause
+  \begin{block}{Conexión SSH (ejemplo)}
+\texttt{\$ ssh pi@192.168.1.50}
+  \end{block}
+\end{frame}
+
+%------------------------ kit ------------------------
+\begin{frame}{Material necesario (checklist)}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Raspberry Pi 5 + disipador
+        \item Tarjeta µSD con Raspberry Pi OS Lite
+        \item Fuente USB-C (5 V ≥ 3 A)
+        \item Cable LAN Cat 5e/6
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \includegraphics[width=\linewidth]{example-image-b}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+%------------------------ cierre -----------------------------------
+\begin{frame}%[standout]
+  ¡Comencemos!\\
+  \small Siguiente: encender la Pi y usar la terminal
+\end{frame}
+
+\end{document}
+

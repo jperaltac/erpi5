@@ -1,0 +1,163 @@
+% !TEX program = lualatex
+\documentclass[aspectratio=169, professionalfonts]{beamer}
+\usepackage[spanish]{babel}
+\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage{mwe}
+\usepackage{xcolor}
+\usepackage{emoji}
+\usepackage{minted}
+\setminted{
+  fontsize=\small,
+  bgcolor=gray!10,
+  linenos=false
+}
+\setmainfont{Libertinus Serif}
+
+\title[ClústerLab • Día 3]{ClústerLab 2025\\\huge Raspberry Pi OS y monitoreo básico}
+\subtitle{Escuela de Computación Distribuida – ITM Medellín}
+\author{Equipo docente ClústerLab}
+\date{8 de agosto 2025}
+
+\begin{document}
+
+%----------------------------------------------------------------- title
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+%----------------------------------------------------------------- agenda
+\begin{frame}{Agenda Día 3 (09:00 – 13:00)}
+\begin{enumerate}
+  \item 09:00–09:15   Revisión rápida (IP + SSH).  
+  \item 09:15–10:00   Raspberry Pi OS Lite vs Desktop.  
+  \item 10:00–10:45   Cambiar hostname, crear usuarios, sudo.  
+  \item 10:45–11:30   Actualizar sistema y activar servicios.  
+  \item 11:30–12:30   Herramientas de monitoreo: \texttt{htop}, \texttt{df}, temperatura CPU.  
+  \item 12:30–13:00   Reto grupal: nodo accesible por nombre + script diagnóstico.  
+\end{enumerate}
+\end{frame}
+
+%----------------------------------------------------------------- lite vs desktop
+\begin{frame}{Raspberry Pi OS Lite vs Desktop}
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+\begin{itemize}
+  \item \textbf{Lite}: sin entorno gráfico, arranque más rápido, menos RAM ≈ 300 MB.  
+  \item \textbf{Desktop}: incluye GUI, útil para demostraciones locales.  
+  \item Para el clúster usaremos **Lite** → menos sobre-carga.  
+\end{itemize}
+\end{column}
+\begin{column}{0.4\textwidth}
+  \centering\includegraphics[width=\linewidth]{example-image}
+\end{column}
+\end{columns}
+\end{frame}
+
+%----------------------------------------------------------------- hostname
+\begin{frame}[fragile]{Cambiar hostname}
+\begin{minted}{bash}
+# Editar hostname
+$ sudo nano /etc/hostname
+nodo01        # <--- nuevo nombre
+
+# Editar hosts para resolver localmente
+$ sudo nano /etc/hosts
+127.0.1.1   nodo01
+\end{minted}
+Tras reiniciar (\texttt{sudo reboot}) el prompt mostrará el nuevo nombre.
+\end{frame}
+
+%----------------------------------------------------------------- usuarios
+\begin{frame}[fragile]{Crear usuario y dar sudo}
+\begin{minted}{bash}
+# Añadir usuario alumno
+$ sudo adduser alumno
+# Agregar a grupo sudo
+$ sudo usermod -aG sudo alumno
+\end{minted}
+\begin{itemize}
+  \item Buen hábito: desactivar login del usuario \texttt{pi} cuando todo funcione.  
+  \item Ver grupos del usuario: \texttt{groups alumno}.  
+\end{itemize}
+\end{frame}
+
+%----------------------------------------------------------------- update & raspi-config
+\begin{frame}[fragile]{Actualizar sistema y raspi-config}
+\begin{minted}{bash}
+$ sudo apt update && sudo apt full-upgrade -y
+$ sudo raspi-config      # menú de configuración
+\end{minted}
+\begin{itemize}
+  \item Cambiar zona horaria y localización.  
+  \item Habilitar \texttt{ssh} si se desactivó.  
+  \item Expandir sistema de archivos (normalmente ya expandido).  
+\end{itemize}
+\end{frame}
+
+%----------------------------------------------------------------- htop / df
+\begin{frame}[fragile]{Monitoreo rápido}
+\begin{columns}[T]
+\begin{column}{0.52\textwidth}
+\texttt{htop} (CPU, RAM, procesos)  
+\begin{minted}{bash}
+$ sudo apt install htop
+$ htop
+\end{minted}
+
+\texttt{df -h} (uso de disco)  
+\begin{minted}{bash}
+$ df -h
+\end{minted}
+\end{column}
+\begin{column}{0.43\textwidth}
+  \includegraphics[width=\linewidth]{example-image-b}
+\end{column}
+\end{columns}
+\end{frame}
+
+%----------------------------------------------------------------- temperatura
+\begin{frame}[fragile]{Temperatura del CPU y voltaje}
+\begin{minted}{bash}
+$ vcgencmd measure_temp
+temp=42.0'C
+$ vcgencmd measure_volts
+volt=0.86V
+\end{minted}
+Para monitorizar continuamente:  
+\begin{minted}{bash}
+watch -n 2 vcgencmd measure_temp
+\end{minted}
+\end{frame}
+
+%----------------------------------------------------------------- acceso remoto
+\begin{frame}{Acceso remoto por nombre de host}
+\begin{itemize}
+  \item Linux/macOS → mDNS (\textit{hostname.local}) funciona por defecto.  
+  \item En Windows instala \emph{Bonjour Print Services} o usa un archivo \texttt{C:\textbackslash Windows\textbackslash System32\textbackslash drivers\textbackslash etc\textbackslash hosts}.  
+  \item Objetivo: \texttt{ssh alumno@nodo01.local} sin conocer la IP.  
+\end{itemize}
+\end{frame}
+
+%----------------------------------------------------------------- reto grupal
+\begin{frame}[fragile]{Reto grupal (12:30 – 13:00)}
+\begin{enumerate}
+  \item Cambiar hostname → \texttt{nodoXX}.  
+  \item Configurar acceso SSH por clave, sin contraseña.  
+  \item Escribir \texttt{diag.sh} que muestre:
+    \begin{itemize}
+      \item Hostname + temperatura + uso CPU.  
+      \item Espacio libre en \texttt{/home}.  
+    \end{itemize}
+  \item Compartir el script con otra Pi y ejecutarlo remotamente.  
+\end{enumerate}
+\end{frame}
+
+%----------------------------------------------------------------- cierre
+\begin{frame}[fragile]
+Nodo listo y monitoreado ✔\\
+\small ¡Fin de la Semana 1!
+\end{frame}
+
+\end{document}
+

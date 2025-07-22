@@ -1,0 +1,3 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYGZdl{}\PYG{+w}{ }ssh\PYGZhy{}copy\PYGZhy{}id\PYG{+w}{ }pi@192.168.1.50
+\end{MintedVerbatim}

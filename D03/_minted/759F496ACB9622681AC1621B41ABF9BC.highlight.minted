@@ -1,0 +1,4 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYGZdl{}\PYG{+w}{ }sudo\PYG{+w}{ }apt\PYG{+w}{ }install\PYG{+w}{ }htop
+\PYGZdl{}\PYG{+w}{ }htop
+\end{MintedVerbatim}

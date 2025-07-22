@@ -1,0 +1,153 @@
+% !TEX program = lualatex
+\documentclass[aspectratio=169, professionalfonts]{beamer}
+\usepackage[spanish]{babel}
+\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{mwe}            % imágenes de ejemplo
+\usepackage{xcolor}
+\usepackage{emoji}
+\usepackage{minted}         % bloques de código
+\setminted{
+  fontsize=\small,
+  bgcolor=gray!10,
+  linenos=false
+}
+\setmainfont{Libertinus Serif}
+
+\title[ClústerLab • Día 2]{ClústerLab 2025\\\huge Redes IP y SSH seguro}
+\subtitle{Escuela de Computación Distribuida – ITM Medellín}
+\author{Equipo docente ClústerLab}
+\date{6 de agosto 2025}
+
+\begin{document}
+
+%---------------------------------- title ----------------------------------
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+%---------------------------------- agenda ---------------------------------
+\begin{frame}{Agenda Día 2 (09:00–13:00)}
+\begin{enumerate}
+  \item 09:00–09:15  Revisión rápida (comandos Día 1)
+  \item 09:15–10:30  Conceptos IP, máscaras y subredes
+  \item 10:45–11:30  SSH seguro + claves públicas
+  \item 11:30–12:00  Transferencia y montaje remoto (\texttt{scp}/\texttt{sshfs})
+  \item 12:00–13:00  Actividad: \texttt{ping\_all.sh} + compartir carpeta
+\end{enumerate}
+\end{frame}
+
+%---------------------------------- conceptos IP ---------------------------
+\begin{frame}{Dirección IP vs. máscara de red}
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+\begin{block}{IPv4}
+  \texttt{192.168.\textbf{1}.42}\newline
+  \small 4 octetos = 32 bits
+\end{block}
+\pause
+\begin{itemize}
+  \item Red casera típica → \texttt{192.168.1.0/24}
+  \item Máscara \texttt{255.255.255.0} (24 bits de red)
+  \item Último octeto identifica el host (0–255)
+\end{itemize}
+\end{column}
+\begin{column}{0.4\textwidth}
+  \centering\includegraphics[width=\linewidth]{example-image}
+\end{column}
+\end{columns}
+\end{frame}
+
+%---------------------------------- comandos red ---------------------------
+\begin{frame}{Comandos de red útiles}
+\begin{itemize}
+  \item Ver interfaces → \mintinline{bash}|ip a|
+  \item Tabla de rutas → \mintinline{bash}|ip r|
+  \item Comprobar conectividad → \mintinline{bash}|ping 192.168.1.1|
+  \item Escanear red → \mintinline{bash}|nmap -sP 192.168.1.0/24|
+\end{itemize}
+\pause
+\begin{block}{WSL tip}
+En WSL 2 las subredes son distintas; usa la IP de tu adaptador físico (Ethernet/Wi-Fi) para conectarte a las Pi.
+\end{block}
+\end{frame}
+
+%---------------------------------- ssh seguro -----------------------------
+\begin{frame}[fragile]{SSH con clave pública}
+\begin{enumerate}
+  \item Generar clave (local):  
+\begin{minted}{bash}
+$ ssh-keygen -t ed25519
+\end{minted}
+  \item Copiar clave a la Pi:  
+\begin{minted}{bash}
+$ ssh-copy-id pi@192.168.1.50
+\end{minted}
+  \item Probar login sin contraseña:  
+\begin{minted}{bash}
+$ ssh pi@192.168.1.50
+\end{minted}
+\end{enumerate}
+\pause
+\small
+\emoji{lock} Para deshabilitar contraseñas: editar \texttt{/etc/ssh/sshd\_config} y poner  
+\texttt{PasswordAuthentication no}, luego \texttt{sudo systemctl restart ssh}.
+\end{frame}
+
+
+\begin{comment}
+
+\begin{frame}{Copiar y montar carpetas remotas}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{\texttt{scp}}
+\begin{minted}{bash}
+$ scp datos.csv pi@192.168.1.50:/home/pi/
+\end{minted}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{\texttt{sshfs}}
+%\begin{minted}{bash}
+%$ mkdir ~/pi_home
+%$ sshfs pi@192.168.1.50:/home/pi ~/pi\_home
+%\end{minted}
+\end{column}
+\end{columns}
+\pause
+\centering
+\includegraphics[width=0.7\linewidth]{example-image-duck}
+\end{frame}
+
+\end{comment}
+
+%---------------------------------- actividad ------------------------------
+\begin{comment}
+\begin{frame}{Actividad (12:00 – 13:00)}
+\begin{enumerate}
+  \item Escribe \texttt{ping\_all.sh}:  
+\begin{minted}{bash}
+#!/usr/bin/env bash
+for ip in 192.168.1.{50..60}; do
+  if ping -c1 -W1 $ip &>/dev/null; then
+    echo "$ip OK"
+  else
+    echo "$ip FAIL"
+  fi
+done
+\end{minted}
+  \item Colócalo en \texttt{\/home\/pi\/bin}, hazlo ejecutable y pruébalo.  
+  \item Monta una carpeta remota vía \texttt{sshfs} y transfiere un archivo.  
+\end{enumerate}
+\end{frame}
+\end{comment}
+
+\begin{comment}
+\begin{frame}[standout]
+Red y SSH listos\\
+\small Siguiente Bash avanzado y automatización
+\end{frame}
+\end{comment}
+
+\end{document}
+

@@ -1,0 +1,20 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+ch}{\PYGZsh{}!/usr/bin/env bash}
+\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Nodo: }\PYG{k}{\PYGZdl{}(}hostname\PYG{k}{)}\PYG{l+s+s2}{\PYGZdq{}}
+\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Fecha: }\PYG{k}{\PYGZdl{}(}date\PYG{k}{)}\PYG{l+s+s2}{\PYGZdq{}}
+\PYG{c+c1}{\PYGZsh{} Temperatura}
+\PYG{n+nv}{temp}\PYG{o}{=}\PYG{k}{\PYGZdl{}(}vcgencmd\PYG{+w}{ }measure\PYGZus{}temp\PYG{+w}{ }\PYG{p}{|}\PYG{+w}{ }cut\PYG{+w}{ }\PYGZhy{}d\PYG{l+s+s2}{\PYGZdq{}=\PYGZdq{}}\PYG{+w}{ }\PYGZhy{}f2\PYG{k}{)}
+\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Temp: }\PYG{n+nv}{\PYGZdl{}temp}\PYG{l+s+s2}{\PYGZdq{}}
+\PYG{c+c1}{\PYGZsh{} Uso CPU 1 segundo}
+\PYG{n+nv}{cpu}\PYG{o}{=}\PYG{k}{\PYGZdl{}(}grep\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}cpu \PYGZsq{}}\PYG{+w}{ }/proc/stat\PYG{k}{)}
+sleep\PYG{+w}{ }\PYG{l+m}{1}
+\PYG{n+nv}{cpu2}\PYG{o}{=}\PYG{k}{\PYGZdl{}(}grep\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}cpu \PYGZsq{}}\PYG{+w}{ }/proc/stat\PYG{k}{)}
+\PYG{n+nv}{idle}\PYG{o}{=}\PYG{k}{\PYGZdl{}((}\PYG{+w}{ }\PYG{k}{\PYGZdl{}(}\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{n+nv}{\PYGZdl{}cpu}\PYG{+w}{  }\PYG{p}{|}\PYG{+w}{ }cut\PYG{+w}{ }\PYGZhy{}d\PYG{l+s+s2}{\PYGZdq{} \PYGZdq{}}\PYG{+w}{ }\PYGZhy{}f5\PYG{k}{)}\PYG{+w}{ }\PYG{k}{))}
+\PYG{n+nv}{idle2}\PYG{o}{=}\PYG{k}{\PYGZdl{}((}\PYG{+w}{ }\PYG{k}{\PYGZdl{}(}\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{n+nv}{\PYGZdl{}cpu2}\PYG{+w}{ }\PYG{p}{|}\PYG{+w}{ }cut\PYG{+w}{ }\PYGZhy{}d\PYG{l+s+s2}{\PYGZdq{} \PYGZdq{}}\PYG{+w}{ }\PYGZhy{}f5\PYG{k}{)}\PYG{+w}{ }\PYG{k}{))}
+\PYG{n+nv}{total}\PYG{o}{=}\PYG{k}{\PYGZdl{}((}\PYG{+w}{ }\PYG{k}{\PYGZdl{}(}\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{n+nv}{\PYGZdl{}cpu}\PYG{+w}{  }\PYG{p}{|}\PYG{+w}{ }cut\PYG{+w}{ }\PYGZhy{}d\PYG{l+s+s2}{\PYGZdq{} \PYGZdq{}}\PYG{+w}{ }\PYGZhy{}f2\PYGZhy{}\PYG{+w}{ }\PYG{p}{|}\PYG{+w}{ }tr\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{} \PYGZsq{}}\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}+\PYGZsq{}}\PYG{k}{)}\PYG{+w}{ }\PYG{k}{))}
+\PYG{n+nv}{total2}\PYG{o}{=}\PYG{k}{\PYGZdl{}((}\PYG{+w}{ }\PYG{k}{\PYGZdl{}(}\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{n+nv}{\PYGZdl{}cpu2}\PYG{+w}{ }\PYG{p}{|}\PYG{+w}{ }cut\PYG{+w}{ }\PYGZhy{}d\PYG{l+s+s2}{\PYGZdq{} \PYGZdq{}}\PYG{+w}{ }\PYGZhy{}f2\PYGZhy{}\PYG{+w}{ }\PYG{p}{|}\PYG{+w}{ }tr\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{} \PYGZsq{}}\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}+\PYGZsq{}}\PYG{k}{)}\PYG{+w}{ }\PYG{k}{))}
+\PYG{n+nv}{usage}\PYG{o}{=}\PYG{k}{\PYGZdl{}((}\PYG{+w}{ }\PYG{l+m}{100}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{o}{(}\PYG{+w}{ }\PYG{o}{(}\PYG{n+nv}{total2}\PYG{o}{\PYGZhy{}}\PYG{n+nv}{total}\PYG{o}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{o}{(}\PYG{n+nv}{idle2}\PYG{o}{\PYGZhy{}}\PYG{n+nv}{idle}\PYG{o}{)}\PYG{+w}{ }\PYG{o}{)}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{o}{(}\PYG{n+nv}{total2}\PYG{o}{\PYGZhy{}}\PYG{n+nv}{total}\PYG{o}{)}\PYG{+w}{ }\PYG{k}{))}
+\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Uso CPU: }\PYG{l+s+si}{\PYGZdl{}\PYGZob{}}\PYG{n+nv}{usage}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZpc{}}\PYG{l+s+s2}{\PYGZdq{}}
+\PYG{c+c1}{\PYGZsh{} Disco}
+df\PYG{+w}{ }\PYGZhy{}h\PYG{+w}{ }/home\PYG{+w}{ }\PYG{p}{|}\PYG{+w}{ }awk\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}NR==2\PYGZob{}print \PYGZdq{}Disco libre: \PYGZdq{}\PYGZdl{}4\PYGZcb{}\PYGZsq{}}
+\end{MintedVerbatim}

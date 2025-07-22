@@ -1,0 +1,6 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Añadir usuario alumno}
+\PYGZdl{}\PYG{+w}{ }sudo\PYG{+w}{ }adduser\PYG{+w}{ }alumno
+\PYG{c+c1}{\PYGZsh{} Agregar a grupo sudo}
+\PYGZdl{}\PYG{+w}{ }sudo\PYG{+w}{ }usermod\PYG{+w}{ }\PYGZhy{}aG\PYG{+w}{ }sudo\PYG{+w}{ }alumno
+\end{MintedVerbatim}

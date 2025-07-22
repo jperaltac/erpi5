@@ -1,0 +1,7 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n+nv}{HOSTS}\PYG{o}{=}\PYG{o}{(}node1\PYG{+w}{ }node2\PYG{+w}{ }node3\PYG{o}{)}
+\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Total: }\PYG{l+s+si}{\PYGZdl{}\PYGZob{}\PYGZsh{}}\PYG{n+nv}{HOSTS}\PYG{p}{[@]}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}
+\PYG{k}{for}\PYG{+w}{ }h\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+si}{\PYGZdl{}\PYGZob{}}\PYG{n+nv}{HOSTS}\PYG{p}{[@]}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{;}\PYG{+w}{ }\PYG{k}{do}
+\PYG{+w}{  }ssh\PYG{+w}{ }\PYG{n+nv}{\PYGZdl{}h}\PYG{+w}{ }uptime
+\PYG{k}{done}
+\end{MintedVerbatim}

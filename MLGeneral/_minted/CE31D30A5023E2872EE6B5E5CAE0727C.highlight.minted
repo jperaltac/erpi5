@@ -1,0 +1,24 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{keras}\PYG{n+nn}{.}\PYG{n+nn}{datasets}\PYG{+w}{ }\PYG{k+kn}{import} \PYG{n}{mnist}
+\PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{keras}\PYG{n+nn}{.}\PYG{n+nn}{utils}\PYG{+w}{ }\PYG{k+kn}{import} \PYG{n}{to\PYGZus{}categorical}
+\PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{keras}\PYG{n+nn}{.}\PYG{n+nn}{models}\PYG{+w}{ }\PYG{k+kn}{import} \PYG{n}{Sequential}
+\PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{keras}\PYG{n+nn}{.}\PYG{n+nn}{layers}\PYG{+w}{ }\PYG{k+kn}{import} \PYG{n}{Conv2D}\PYG{p}{,} \PYG{n}{MaxPool2D}\PYG{p}{,} \PYG{n}{Flatten}\PYG{p}{,} \PYG{n}{Dense}
+
+\PYG{p}{(}\PYG{n}{X\PYGZus{}train}\PYG{p}{,} \PYG{n}{y\PYGZus{}train}\PYG{p}{)}\PYG{p}{,} \PYG{p}{(}\PYG{n}{X\PYGZus{}test}\PYG{p}{,} \PYG{n}{y\PYGZus{}test}\PYG{p}{)} \PYG{o}{=} \PYG{n}{mnist}\PYG{o}{.}\PYG{n}{load\PYGZus{}data}\PYG{p}{(}\PYG{p}{)}
+\PYG{n}{X\PYGZus{}train} \PYG{o}{=} \PYG{n}{X\PYGZus{}train}\PYG{o}{.}\PYG{n}{reshape}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{28}\PYG{p}{,}\PYG{l+m+mi}{28}\PYG{p}{,}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{o}{/}\PYG{l+m+mf}{255.}
+\PYG{n}{X\PYGZus{}test}  \PYG{o}{=} \PYG{n}{X\PYGZus{}test}\PYG{o}{.}\PYG{n}{reshape}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{28}\PYG{p}{,}\PYG{l+m+mi}{28}\PYG{p}{,}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{o}{/}\PYG{l+m+mf}{255.}
+\PYG{n}{y\PYGZus{}train} \PYG{o}{=} \PYG{n}{to\PYGZus{}categorical}\PYG{p}{(}\PYG{n}{y\PYGZus{}train}\PYG{p}{,}\PYG{l+m+mi}{10}\PYG{p}{)}
+\PYG{n}{y\PYGZus{}test}  \PYG{o}{=} \PYG{n}{to\PYGZus{}categorical}\PYG{p}{(}\PYG{n}{y\PYGZus{}test}\PYG{p}{,}\PYG{l+m+mi}{10}\PYG{p}{)}
+
+\PYG{n}{model} \PYG{o}{=} \PYG{n}{Sequential}\PYG{p}{(}\PYG{p}{[}
+    \PYG{n}{Conv2D}\PYG{p}{(}\PYG{l+m+mi}{32}\PYG{p}{,}\PYG{p}{(}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{l+m+mi}{3}\PYG{p}{)}\PYG{p}{,}\PYG{n}{activation}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{relu}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{n}{input\PYGZus{}shape}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{28}\PYG{p}{,}\PYG{l+m+mi}{28}\PYG{p}{,}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{p}{)}\PYG{p}{,}
+    \PYG{n}{MaxPool2D}\PYG{p}{(}\PYG{p}{)}\PYG{p}{,}
+    \PYG{n}{Flatten}\PYG{p}{(}\PYG{p}{)}\PYG{p}{,}
+    \PYG{n}{Dense}\PYG{p}{(}\PYG{l+m+mi}{128}\PYG{p}{,}\PYG{n}{activation}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{relu}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{,}
+    \PYG{n}{Dense}\PYG{p}{(}\PYG{l+m+mi}{10}\PYG{p}{,}\PYG{n}{activation}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{softmax}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{]}\PYG{p}{)}
+\PYG{n}{model}\PYG{o}{.}\PYG{n}{compile}\PYG{p}{(}\PYG{n}{optimizer}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{adam}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}
+              \PYG{n}{loss}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{categorical\PYGZus{}crossentropy}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}
+              \PYG{n}{metrics}\PYG{o}{=}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{accuracy}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{)}
+\PYG{n}{model}\PYG{o}{.}\PYG{n}{fit}\PYG{p}{(}\PYG{n}{X\PYGZus{}train}\PYG{p}{,}\PYG{n}{y\PYGZus{}train}\PYG{p}{,}\PYG{n}{epochs}\PYG{o}{=}\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{n}{batch\PYGZus{}size}\PYG{o}{=}\PYG{l+m+mi}{128}\PYG{p}{,}
+          \PYG{n}{validation\PYGZus{}split}\PYG{o}{=}\PYG{l+m+mf}{0.1}\PYG{p}{)}
+\end{MintedVerbatim}

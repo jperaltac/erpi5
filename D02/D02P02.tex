@@ -1,0 +1,147 @@
+% !TEX program = lualatex
+\documentclass[aspectratio=169, professionalfonts]{beamer}
+\usepackage[spanish]{babel}
+\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage{mwe}
+\usepackage{xcolor}
+\usepackage{minted}
+\usepackage{emoji}
+\setminted{
+  fontsize=\small,
+  bgcolor=gray!10,
+  linenos=false
+}
+\setmainfont{Libertinus Serif}
+
+\title[ClústerLab • Día 2]{Bash avanzado: condicionales y bucles}
+\subtitle{Hands-on en Raspberry Pi 5}
+\author{Equipo docente ClústerLab}
+\date{6 de agosto 2025}
+
+\begin{document}
+
+%---------------------------------- title ----------------------------------
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+%---------------------------------- if -------------------------------------
+\begin{frame}[fragile]{Condicional \texttt{if}}
+\begin{minted}{bash}
+read -p "Archivo: " f
+if [[ -f $f ]]; then
+  echo "Existe y es regular"
+else
+  echo "No existe"
+fi
+\end{minted}
+\pause
+\begin{itemize}
+  \item \texttt{-f}, \texttt{-d}, \texttt{-x}, \texttt{-s}  pruebas de archivo
+  %\item Comparar cadenas: \texttt{[[ "\$var" == "abc" ]]}
+  %\item Código de salida en \texttt{\$?}
+\end{itemize}
+\end{frame}
+
+%---------------------------------- for/while --------------------------------
+\begin{frame}[fragile]{Bucles \texttt{for} y \texttt{while}}
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+\textbf{\texttt{for}}
+\begin{minted}{bash}
+for n in {1..5}; do
+  echo "Iteración $n"
+done
+\end{minted}
+
+\textbf{\texttt{while}}
+\begin{minted}{bash}
+contador=0
+while (( contador < 3 )); do
+  echo $contador
+  ((contador++))
+done
+\end{minted}
+\end{column}
+\begin{column}{0.4\textwidth}
+\includegraphics[width=\linewidth]{example-image-b}
+\end{column}
+\end{columns}
+\end{frame}
+
+%---------------------------------- case -----------------------------------
+\begin{frame}[fragile]{Estructura \texttt{case}}
+\begin{minted}{bash}
+case $1 in
+  start)  systemctl start myapp ;;
+  stop)   systemctl stop  myapp ;;
+  status) systemctl status myapp ;;
+  *)      echo "Uso: $0 {start|stop|status}" ;;
+esac
+\end{minted}
+\end{frame}
+
+%---------------------------------- arrays ----------------------------------
+\begin{frame}[fragile]{Arrays en Bash}
+\begin{minted}{bash}
+HOSTS=(node1 node2 node3)
+echo "Total: ${#HOSTS[@]}"
+for h in "${HOSTS[@]}"; do
+  ssh $h uptime
+done
+\end{minted}
+\end{frame}
+
+%---------------------------------- script completo -------------------------
+\begin{frame}[fragile]{Ejemplo completo — \texttt{ping\_all.sh}}
+\begin{minted}{bash}
+#!/usr/bin/env bash
+IPS=(192.168.1.{50..60})
+for ip in "${IPS[@]}"; do
+  if ping -c1 -W1 $ip &>/dev/null; then
+    echo -e "$ip \e[32mOK\e[0m"
+  else
+    echo -e "$ip \e[31mFAIL\e[0m"
+  fi
+done
+\end{minted}
+\end{frame}
+
+%---------------------------------- sshfs -----------------------------------
+\begin{frame}[fragile]{Montar carpeta remota con \texttt{sshfs}}
+\begin{minted}{bash}
+$ sudo apt install sshfs         # si es necesario
+$ mkdir ~/pi_share
+$ sshfs pi@node2:/home/pi ~/pi_share
+...
+$ fusermount -u ~/pi_share       # desmontar
+\end{minted}
+\end{frame}
+
+%---------------------------------- reto ------------------------------------
+\begin{frame}[fragile]{Mini-reto (15 min)}
+\begin{enumerate}
+  %\item Modifica \texttt{ping\_all.sh} para guardar salida en \texttt{logs/\$(date +\%F).txt}.  
+  \item Copia el log a otra Pi con \texttt{scp}.  
+  \item Verifica permisos y propietario después de la transferencia.  
+\end{enumerate}
+\end{frame}
+
+%---------------------------------- recursos --------------------------------
+\begin{frame}{Recursos extra}
+\begin{itemize}
+  \item Advanced Bash Scripting Guide — TLDP  
+  \item \url{https://explainshell.com}  
+  \item \texttt{man bash}, \texttt{help builtin}  
+\end{itemize}
+\end{frame}
+
+%---------------------------------- cierre ----------------------------------
+\begin{frame}[fragile]
+¡Trabajo completado!\\
+\small Próximo día → Raspberry Pi OS y monitoreo
+\end{frame}
+
+\end{document}
+

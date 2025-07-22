@@ -1,0 +1,5 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n}{encoded} \PYG{o}{=} \PYG{n}{layers}\PYG{o}{.}\PYG{n}{Dense}\PYG{p}{(}\PYG{l+m+mi}{32}\PYG{p}{,} \PYG{n}{activation}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{relu}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{(}\PYG{n}{inputs}\PYG{p}{)}
+\PYG{n}{decoded} \PYG{o}{=} \PYG{n}{layers}\PYG{o}{.}\PYG{n}{Dense}\PYG{p}{(}\PYG{l+m+mi}{784}\PYG{p}{,} \PYG{n}{activation}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{sigmoid}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{(}\PYG{n}{encoded}\PYG{p}{)}
+\PYG{n}{autoencoder} \PYG{o}{=} \PYG{n}{keras}\PYG{o}{.}\PYG{n}{Model}\PYG{p}{(}\PYG{n}{inputs}\PYG{p}{,} \PYG{n}{decoded}\PYG{p}{)}
+\end{MintedVerbatim}

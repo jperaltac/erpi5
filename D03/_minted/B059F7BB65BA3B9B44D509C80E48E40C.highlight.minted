@@ -1,0 +1,4 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYGZdl{}\PYG{+w}{ }scp\PYG{+w}{ }diag.sh\PYG{+w}{ }alumno@nodo02:/home/alumno/
+\PYGZdl{}\PYG{+w}{ }ssh\PYG{+w}{ }alumno@nodo02\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}bash /home/alumno/diag.sh\PYGZsq{}}
+\end{MintedVerbatim}

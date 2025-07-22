@@ -1,0 +1,8 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n}{model}\PYG{o}{.}\PYG{n}{compile}\PYG{p}{(}\PYG{n}{optimizer}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{adam}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}
+              \PYG{n}{loss}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{sparse\PYGZus{}categorical\PYGZus{}crossentropy}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}
+              \PYG{n}{metrics}\PYG{o}{=}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{accuracy}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{)}
+\PYG{n}{history} \PYG{o}{=} \PYG{n}{model}\PYG{o}{.}\PYG{n}{fit}\PYG{p}{(}\PYG{n}{train\PYGZus{}ds}\PYG{p}{,}
+                    \PYG{n}{epochs}\PYG{o}{=}\PYG{l+m+mi}{20}\PYG{p}{,}
+                    \PYG{n}{validation\PYGZus{}data}\PYG{o}{=}\PYG{n}{val\PYGZus{}ds}\PYG{p}{)}
+\end{MintedVerbatim}

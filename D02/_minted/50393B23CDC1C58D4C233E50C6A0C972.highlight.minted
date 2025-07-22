@@ -1,0 +1,7 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n+nv}{contador}\PYG{o}{=}\PYG{l+m}{0}
+\PYG{k}{while}\PYG{+w}{ }\PYG{o}{(}\PYG{o}{(}\PYG{+w}{ }contador\PYG{+w}{ }\PYGZlt{}\PYG{+w}{ }\PYG{l+m}{3}\PYG{+w}{ }\PYG{o}{)}\PYG{o}{)}\PYG{p}{;}\PYG{+w}{ }\PYG{k}{do}
+\PYG{+w}{  }\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{n+nv}{\PYGZdl{}contador}
+\PYG{+w}{  }\PYG{o}{(}\PYG{o}{(}contador++\PYG{o}{)}\PYG{o}{)}
+\PYG{k}{done}
+\end{MintedVerbatim}

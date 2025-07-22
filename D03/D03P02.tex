@@ -1,0 +1,110 @@
+% !TEX program = lualatex
+\documentclass[aspectratio=169, professionalfonts]{beamer}
+\usepackage[spanish]{babel}
+\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage{mwe}
+\usepackage{xcolor}
+\usepackage{minted}
+\usepackage{emoji}
+\setminted{
+  fontsize=\small,
+  bgcolor=gray!10,
+  linenos=false
+}
+\setmainfont{Libertinus Serif}
+
+\title[ClústerLab • Día 3]{Desafío grupal y diagnóstico}
+\subtitle{Hands-on en Raspberry Pi 5}
+\author{Equipo docente ClústerLab}
+\date{8 de agosto 2025}
+
+\begin{document}
+
+%-------------------------------------------------------------- title
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+%-------------------------------------------------------------- objetivo
+\begin{frame}{Objetivo del desafío}
+\begin{itemize}
+  \item Dejar su nodo \textbf{accesible por nombre} dentro de la LAN.  
+  \item Configurar login SSH sin contraseña.  
+  \item Crear un script de diagnóstico y compartirlo con otra Pi.  
+  \item Demostrar monitoreo en vivo (\texttt{watch}).  
+\end{itemize}
+\end{frame}
+
+%-------------------------------------------------------------- checklist
+\begin{frame}{Checklist previo}
+\begin{enumerate}
+  \item Hostname cambiado en \texttt{/etc/hostname} y \texttt{/etc/hosts}.  
+  \item Clave SSH copiada: \mintinline{bash}|ssh-copy-id alumno@nodo02|  
+  \item \texttt{avahi-daemon} corriendo (\texttt{systemctl status avahi-daemon}).  
+\end{enumerate}
+\end{frame}
+
+%-------------------------------------------------------------- script diag
+\begin{frame}[fragile]{Plantilla de \texttt{diag.sh}}
+\begin{minted}{bash}
+#!/usr/bin/env bash
+echo "Nodo: $(hostname)"
+echo "Fecha: $(date)"
+# Temperatura
+temp=$(vcgencmd measure_temp | cut -d"=" -f2)
+echo "Temp: $temp"
+# Uso CPU 1 segundo
+cpu=$(grep 'cpu ' /proc/stat)
+sleep 1
+cpu2=$(grep 'cpu ' /proc/stat)
+idle=$(( $(echo $cpu  | cut -d" " -f5) ))
+idle2=$(( $(echo $cpu2 | cut -d" " -f5) ))
+total=$(( $(echo $cpu  | cut -d" " -f2- | tr ' ' '+') ))
+total2=$(( $(echo $cpu2 | cut -d" " -f2- | tr ' ' '+') ))
+usage=$(( 100 * ( (total2-total) - (idle2-idle) ) / (total2-total) ))
+echo "Uso CPU: ${usage}%"
+# Disco
+df -h /home | awk 'NR==2{print "Disco libre: "$4}'
+\end{minted}
+\end{frame}
+
+%-------------------------------------------------------------- compartir
+\begin{frame}[fragile]{Compartir script con otra Pi}
+\begin{minted}{bash}
+$ scp diag.sh alumno@nodo02:/home/alumno/
+$ ssh alumno@nodo02 'bash /home/alumno/diag.sh'
+\end{minted}
+\pause
+\centering
+\includegraphics[width=0.7\linewidth]{example-image-duck}
+\end{frame}
+
+%-------------------------------------------------------------- watch
+\begin{frame}[fragile]{Monitoreo en vivo (\texttt{watch})}
+\begin{minted}{bash}
+$ watch -n 2 ./diag.sh
+\end{minted}
+\begin{itemize}
+  \item Refresca la salida cada 2 s.  
+  \item Ideal para observar temperatura bajo carga.  
+\end{itemize}
+\end{frame}
+
+%-------------------------------------------------------------- demo
+\begin{frame}{Demostración final}
+\begin{enumerate}
+  \item Ejecutar \texttt{diag.sh} remoto y mostrar datos.  
+  \item Explicar cómo se resolvió el hostname y qué claves se usan.  
+  \item Tiempo máximo de demo: \textbf{3 min por equipo}.  
+\end{enumerate}
+\end{frame}
+
+%-------------------------------------------------------------- cierre
+\begin{frame}[fragile]
+¡Desafío completado! 🎉\\
+\small Próxima semana → Montaje físico y NFS
+\end{frame}
+
+\end{document}
+
