@@ -1,0 +1,129 @@
+% !TEX program = lualatex
+\documentclass[aspectratio=169,professionalfonts]{beamer}
+\input{../preamble.tex}
+
+\title[ClústerLab • Día 5]{Primeros trabajos en Slurm}
+\subtitle{sbatch, squeue y monitoreo básico}
+\author{Equipo docente ClústerLab}
+\date{13 de agosto de 2025}
+
+\begin{document}
+
+%------------------------------ portada ----------------------------
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+%------------------------------ objetivos --------------------------
+\begin{frame}[fragile]{Objetivos de la sesión}
+  \begin{itemize}
+    \item Enviar el primer trabajo en lote con \texttt{sbatch}.
+    \item Consultar la cola con \texttt{squeue} y \texttt{sacct}.
+    \item Interpretar estados: \texttt{PENDING}, \texttt{RUNNING}, \texttt{COMPLETED}.
+    \item Introducir arreglos de trabajos y límites de recursos.
+  \end{itemize}
+\end{frame}
+
+%------------------------------ agenda -----------------------------
+\begin{frame}[fragile]{Agenda (11:30 – 13:00)}
+  \begin{enumerate}
+    \item Script \texttt{sbatch} mínimo.
+    \item Opciones comunes: \texttt{-p}, \texttt{-N}, \texttt{-n}, \texttt{--mem}, \texttt{--time}.
+    \item Seguimiento con \texttt{squeue} y \texttt{sacct}.
+    \item Ejemplo Python: calcular \(\pi\) con Monte‑Carlo.
+    \item Actividad práctica grupal.
+  \end{enumerate}
+\end{frame}
+
+%------------------------------ sbatch script ----------------------
+\begin{frame}[fragile]{Script \texttt{hello.slurm}}
+  \begin{minted}[bgcolor=gray!15]{bash}
+#!/usr/bin/env bash
+#SBATCH -p main      # partición
+#SBATCH -N 1         # nodos
+#SBATCH -n 4         # tareas
+#SBATCH --time=01:00 # límite
+#SBATCH --job-name=hello
+
+hostname
+sleep 5
+  \end{minted}
+  Enviar con:
+  \begin{minted}{bash}
+$ sbatch hello.slurm
+  \end{minted}
+\end{frame}
+
+%------------------------------ squeue -----------------------------
+\begin{frame}[fragile]{Monitorear la cola}
+  \begin{minted}{bash}
+$ squeue -u $USER
+JOBID PARTITION NAME  USER  ST TIME  NODES NODELIST(REASON)
+123   main      hello jper  PD 0:00  1     (Resources)
+  \end{minted}
+  \begin{itemize}
+    \item Estado \texttt{PD}: pendiente. \texttt{R}: ejecutándose.
+  \end{itemize}
+\end{frame}
+
+%------------------------------ sacct ------------------------------
+\begin{frame}[fragile]{Resumen de uso con \texttt{sacct}}
+  \begin{minted}{bash}
+$ sacct -j 123 --format=JobID,State,Elapsed,MaxRSS
+  \end{minted}
+  Útil para facturación y análisis de memoria.
+\end{frame}
+
+%------------------------------ array ------------------------------
+\begin{frame}[fragile]{Arreglos de trabajos}
+  \begin{minted}{bash}
+$ sbatch --array=1-10%3 pi_mc.slurm
+  \end{minted}
+  Ejecuta 10 réplicas Monte‑Carlo, max 3 simultáneas.
+\end{frame}
+
+%------------------------------ python pi --------------------------
+\begin{frame}[fragile]{Ejemplo Python: \(\pi\) Monte‑Carlo}
+  \begin{minted}[bgcolor=gray!15]{python}
+import random, sys
+N = int(sys.argv[1])
+inside = sum((random.random()**2 + random.random()**2) < 1 for _ in range(N))
+print(4 * inside / N)
+  \end{minted}
+  Script \texttt{pi.slurm}:
+  \begin{minted}[bgcolor=gray!15]{bash}
+#!/usr/bin/env bash
+#SBATCH -p main -n 1 -t 00:02:00 -o pi_%A_%a.out
+python3 pi.py 1000000
+  \end{minted}
+\end{frame}
+
+%------------------------------ actividad -------------------------
+\begin{frame}[fragile]{Actividad práctica (30 min)}
+  \begin{enumerate}
+    \item Envía \texttt{hello.slurm} y confirma ejecución.
+    \item Modifica límites de tiempo y observa el cambio en \texttt{squeue}.
+    \item Lanza un arreglo Monte‑Carlo de \(\pi\) (10 tareas).
+    \item Comparte la desviación estándar de los resultados en el canal.
+  \end{enumerate}
+\end{frame}
+
+%------------------------------ resumen ---------------------------
+\begin{frame}[fragile]{Resumen de la sesión}
+  \begin{itemize}
+    \item \texttt{sbatch} es la puerta de entrada a Slurm.
+    \item \texttt{squeue} y \texttt{sacct} permiten diagnosticar trabajos.
+    \item Arreglos facilitan barrer parámetros.
+  \end{itemize}
+\end{frame}
+
+%------------------------------ recursos --------------------------
+\begin{frame}[fragile]{Recursos recomendados}
+  \begin{itemize}
+    \item \textit{Slurm Quick Start Guide} – SchedMD.
+    \item \url{https://slurm.schedmd.com/sbatch.html}.
+    \item \url{https://slurm.schedmd.com/squeue.html}.
+  \end{itemize}
+\end{frame}
+
+\end{document}

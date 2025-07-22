@@ -1,0 +1,131 @@
+% !TEX program = lualatex
+\documentclass[aspectratio=169,professionalfonts]{beamer}
+\input{../preamble.tex}
+
+\title[ClústerLab • Día 6]{MPI con \texttt{mpi4py} y arranque de proyecto}
+\subtitle{Hello World, π distribuido y elección de proyecto final}
+\author{Equipo docente ClústerLab}
+\date{15 de agosto de 2025}
+
+\begin{document}
+
+%------------------------------ portada ----------------------------
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+%------------------------------ objetivos --------------------------
+\begin{frame}[fragile]{Objetivos de la sesión}
+  \begin{itemize}
+    \item Ejecutar programas MPI sencillos con \texttt{mpi4py}.
+    \item Comprender comunicación punto‑a‑punto y colectivas básicas.
+    \item Distribuir un cálculo Monte‑Carlo de \(\pi\) entre procesos.
+    \item Formar equipos y seleccionar tema de proyecto final.
+  \end{itemize}
+\end{frame}
+
+%------------------------------ agenda -----------------------------
+\begin{frame}[fragile]{Agenda (11:30 – 13:00)}
+  \begin{enumerate}
+    \item Instalación rápida de \texttt{mpi4py}.
+    \item \textit{Hello World} en 4 procesos.
+    \item Comunicación punto-a-punto: \texttt{send}/\texttt{recv}.
+    \item Reducción para estimar \(\pi\).
+    \item Discusión de ideas y formación de equipos.
+  \end{enumerate}
+\end{frame}
+
+%------------------------------ install mpi4py ---------------------
+\begin{frame}[fragile]{Instalar \texttt{mpi4py}}
+  \begin{minted}{bash}
+$ pip install --user mpi4py
+  \end{minted}
+  Usaremos \texttt{srun} para lanzar varios procesos:
+  \begin{minted}{bash}
+$ srun -n 4 python3 hello.py
+  \end{minted}
+\end{frame}
+
+%------------------------------ hello world ------------------------
+\begin{frame}[fragile]{\textit{Hello World}}
+  \begin{minted}[bgcolor=gray!15]{python}
+from mpi4py import MPI
+rank = MPI.COMM_WORLD.Get_rank()
+size = MPI.COMM_WORLD.Get_size()
+print(f"Hola desde rank {rank} de {size}")
+  \end{minted}
+\end{frame}
+
+%------------------------------ send recv -------------------------
+\begin{frame}[fragile]{Comunicación punto‑a‑punto}
+  \begin{minted}[bgcolor=gray!15]{python}
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+if rank == 0:
+    data = {'x': 42}
+    comm.send(data, dest=1)
+else:
+    recv = comm.recv(source=0)
+    print('Rank', rank, 'recibió', recv)
+  \end{minted}
+\end{frame}
+
+%------------------------------ pi distributed --------------------
+\begin{frame}[fragile]{Monte‑Carlo de \(\pi\) distribuido}
+  \begin{minted}[bgcolor=gray!15]{python}
+import random, time
+from mpi4py import MPI
+comm, rank, size = MPI.COMM_WORLD, *map(MPI.Comm.Get_rank,
+                                         [MPI.COMM_WORLD]*1),
+
+N = 1_000_000
+local = sum((random.random()**2 + random.random()**2) < 1 for _ in range(N))
+inside = comm.reduce(local, op=MPI.SUM, root=0)
+if rank == 0:
+    pi = 4 * inside / (N * size)
+    print('Pi ≈', pi)
+  \end{minted}
+\end{frame}
+
+%------------------------------ equipos ---------------------------
+\begin{frame}[fragile]{Formación de equipos}
+  \begin{itemize}
+    \item 6 equipos de 3 personas.
+    \item Cada equipo selecciona un tema y entrega mini‑propuesta (3 ppts + README).
+    \item Presentaciones finales el \textbf{22 de agosto}.
+  \end{itemize}
+\end{frame}
+
+%------------------------------ ideas proyecto --------------------
+\begin{frame}[fragile]{Ideas de proyecto final}
+  \begin{enumerate}
+    \item \textbf{Fractal Mandelbrot} paralelizado con MPI + rendering video.
+    \item \textbf{Conway GPU vs MPI}: comparar velocidades automatizadas.
+    \item \textbf{Weather SIM}: stencil 2D de ecuación de difusión de calor.
+    \item \textbf{N‑Body} simplificado (gravitación) con OpenMP vs MPI.
+    \item \textbf{Regex Search} distribuido en logs grandes con MPI I/O.
+    \item \textbf{Monte Carlo Ising 2D}: estimar \(T_c\) con CNN + Slurm arrays.
+    \item \textbf{Speedup de BLAS}: medir \texttt{OpenBLAS} vs \texttt{Eigen} en la Pi‑farm.
+  \end{enumerate}
+\end{frame}
+
+%------------------------------ actividad -------------------------
+\begin{frame}[fragile]{Actividad práctica (30 min)}
+  \begin{enumerate}
+    \item Ejecuta \textit{Hello World} con 4 procesos.
+    \item Corre el cálculo de \(\pi\) y compara tiempos vs CPU serial.
+    \item Con tu equipo, elige un tema y sube un boceto de objetivos al repositorio.
+  \end{enumerate}
+\end{frame}
+
+%------------------------------ resumen ---------------------------
+\begin{frame}[fragile]{Resumen de la sesión}
+  \begin{itemize}
+    \item \texttt{mpi4py} ofrece una puerta de entrada sencilla a MPI.
+    \item Reducciones y arreglos de trabajos se combinan para experimentos masivos.
+    \item Los proyectos finales consolidarán lo aprendido durante la escuela.
+  \end{itemize}
+\end{frame}
+
+\end{document}

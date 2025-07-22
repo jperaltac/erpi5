@@ -1,0 +1,126 @@
+% !TEX program = lualatex
+\documentclass[aspectratio=169,professionalfonts]{beamer}
+\input{../preamble.tex}
+
+\title[ClústerLab • Día 4]{Montaje físico y escaneo de red}
+\subtitle{Conectando todas las Raspberry Pi al switch}
+\author{Equipo docente ClústerLab}
+\date{11 de agosto de 2025}
+
+\begin{document}
+
+%------------------------------ portada ----------------------------
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+%------------------------------ objetivos --------------------------
+\begin{frame}[fragile]{Objetivos de la sesión}
+  \begin{itemize}
+    \item Montar físicamente el clúster de Raspberry Pi y etiquetar conexiones.
+    \item Verificar el enlace Gigabit y actividad con los LED del switch.
+    \item Escanear la red para identificar IP y hostname de cada nodo.
+    \item Registrar la tabla de nodos en un archivo compartido.
+  \end{itemize}
+\end{frame}
+
+%------------------------------ agenda -----------------------------
+\begin{frame}[fragile]{Agenda (09:00--11:00)}
+  \begin{enumerate}
+    \item Distribución de hardware y numeración de nodos.
+    \item Conectar cables Ethernet y encender las Pi.
+    \item Escaneo con \texttt{arp-scan} y \texttt{nmap}.
+    \item Generar lista \texttt{hosts.csv} para el clúster.
+    \item Actividad práctica grupal.
+  \end{enumerate}
+\end{frame}
+
+%------------------------------ diagrama ---------------------------
+\begin{frame}[fragile]{Topología física sugerida}
+  \begin{center}
+    \includegraphics[width=0.8\linewidth]{example-image} % reemplazar por diagrama real
+  \end{center}
+  \begin{itemize}
+    \item Un switch Gigabit de 24 puertos.
+    \item Nodo \textbf{head} conectado al puerto 1.
+    \item Nodos de cálculo en puertos 2 -- 18.
+  \end{itemize}
+\end{frame}
+
+%------------------------------ leds -------------------------------
+\begin{frame}[fragile]{Comprobación de enlace}
+  \begin{itemize}
+    \item LED verde fijo \(\Rightarrow\) enlace 1 Gb/s.
+    \item LED parpadeante \(\Rightarrow\) tráfico de datos.
+  \end{itemize}
+  \pause
+  \textbf{Comando de confirmación}
+  \begin{minted}{bash}
+$ ethtool eth0 | grep Speed
+  \end{minted}
+\end{frame}
+
+%------------------------------ arp-scan ---------------------------
+\begin{frame}[fragile]{Descubrir dispositivos con arp-scan}
+  \begin{minted}{bash}
+$ sudo apt install arp-scan
+$ sudo arp-scan --interface=eth0 10.0.0.0/24 | grep Raspberry
+  \end{minted}
+  \vspace{0.5em}
+  \begin{itemize}
+    \item Identifica MAC y IP rápidamente.
+    \item Exporta a CSV:
+      \begin{minted}{bash}
+$ arp-scan --quiet --format=csv 10.0.0.0/24 > scan.csv
+      \end{minted}
+  \end{itemize}
+\end{frame}
+
+%------------------------------ nmap -------------------------------
+\begin{frame}[fragile]{Verificar puertos abiertos con nmap}
+  \begin{minted}{bash}
+$ sudo nmap -p 22 --open 10.0.0.0/24
+  \end{minted}
+  \begin{itemize}
+    \item Confirma que el servicio SSH está activo.
+  \end{itemize}
+\end{frame}
+
+%------------------------------ hosts.csv --------------------------
+\begin{frame}[fragile]{Ejemplo de archivo \texttt{hosts.csv}}
+  \begin{minted}{text}
+IP,Hostname,Grupo
+10.0.0.21,pi21,Grupo1
+10.0.0.22,pi22,Grupo1
+...
+  \end{minted}
+  Comparte este archivo en el repositorio NFS (próxima sesión).
+\end{frame}
+
+%------------------------------ actividad --------------------------
+\begin{frame}[fragile]{Actividad práctica (30 min)}
+  \begin{enumerate}
+    \item Conecta tus dos Pi y verifica el enlace.
+    \item Usa \texttt{arp-scan} para obtener IP y hostname.
+    \item Rellena \texttt{hosts.csv} y súbelo al canal del curso.
+    \item Prueba \texttt{ssh piXX} entre nodos.
+  \end{enumerate}
+\end{frame}
+
+%------------------------------ resumen ----------------------------
+\begin{frame}[fragile]{Resumen de la sesión}
+  \begin{itemize}
+    \item Clúster montado y cableado correctamente.
+    \item Tabla de nodos lista para automatizar configuraciones.
+  \end{itemize}
+\end{frame}
+
+%------------------------------ recursos ---------------------------
+\begin{frame}[fragile]{Recursos recomendados}
+  \begin{itemize}
+    \item \url{https://github.com/royhills/arp-scan}.
+    \item \url{https://nmap.org/book/inst-windows.html}.
+  \end{itemize}
+\end{frame}
+
+\end{document}

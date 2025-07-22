@@ -1,0 +1,136 @@
+% !TEX program = lualatex
+\documentclass[aspectratio=169,professionalfonts]{beamer}
+\input{../preamble.tex}
+
+\title[ClústerLab • Día 4]{Servidor NFS y montaje en nodos}
+\subtitle{Compartiendo datos en el clúster}
+\author{Equipo docente ClústerLab}
+\date{11 de agosto de 2025}
+
+\begin{document}
+
+%------------------------------ portada ----------------------------
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+%------------------------------ objetivos --------------------------
+\begin{frame}[fragile]{Objetivos de la sesión}
+  \begin{itemize}
+    \item Instalar y habilitar \texttt{nfs-kernel-server} en el nodo head.
+    \item Exportar un directorio compartido mediante \texttt{/etc/exports}.
+    \item Montar el recurso en los nodos con \texttt{nfs-common}.
+    \item Validar lectura y escritura con un script Python simple.
+  \end{itemize}
+\end{frame}
+
+%------------------------------ agenda -----------------------------
+\begin{frame}[fragile]{Agenda (11:30 – 13:00)}
+  \begin{enumerate}
+    \item Instalación del servidor NFS.
+    \item Configuración de \texttt{/srv/nfs/data} y opciones de exportación.
+    \item Montaje temporal con \texttt{mount}.
+    \item Persistencia en \texttt{/etc/fstab}.
+    \item Prueba de rendimiento y permisos.
+    \item Actividad práctica y cierre.
+  \end{enumerate}
+\end{frame}
+
+%------------------------------ install nfs ------------------------
+\begin{frame}[fragile]{Instalar el servidor NFS (nodo head)}
+  \begin{minted}{bash}
+$ sudo apt install nfs-kernel-server
+$ sudo mkdir -p /srv/nfs/data
+$ sudo chown pi:pi /srv/nfs/data
+  \end{minted}
+  \begin{block}{Abrir el servicio}
+    \begin{minted}{bash}
+$ sudo systemctl enable --now nfs-server
+    \end{minted}
+  \end{block}
+\end{frame}
+
+%------------------------------ exports ---------------------------
+\begin{frame}[fragile]{Configurar \texttt{/etc/exports}}
+  \begin{minted}{bash}
+/srv/nfs/data 10.0.0.0/24(rw,sync,no_root_squash)
+  \end{minted}
+  \begin{minted}{bash}
+$ sudo exportfs -rav
+  \end{minted}
+  \begin{itemize}
+    \item \texttt{rw}: lectura y escritura.
+    \item \texttt{sync}: escribe datos de inmediato (más seguro).
+  \end{itemize}
+\end{frame}
+
+%------------------------------ client install --------------------
+\begin{frame}[fragile]{Instalar cliente NFS (nodos)}
+  \begin{minted}{bash}
+$ sudo apt install nfs-common
+$ sudo mkdir -p /mnt/shared
+  \end{minted}
+\end{frame}
+
+%------------------------------ mount -----------------------------
+\begin{frame}[fragile]{Montaje temporal}
+  \begin{minted}{bash}
+$ sudo mount -t nfs head:/srv/nfs/data /mnt/shared
+  \end{minted}
+  \begin{itemize}
+    \item Comprueba con \texttt{df -h | grep nfs}.
+  \end{itemize}
+\end{frame}
+
+%------------------------------ fstab -----------------------------
+\begin{frame}[fragile]{Montaje permanente en \texttt{/etc/fstab}}
+  \begin{minted}{text}
+head:/srv/nfs/data  /mnt/shared  nfs  defaults,_netdev  0  0
+  \end{minted}
+  \begin{minted}{bash}
+$ sudo mount -a  # prueba sintaxis
+  \end{minted}
+\end{frame}
+
+%------------------------------ python test -----------------------
+\begin{frame}[fragile]{Script Python de prueba}
+  \begin{minted}[bgcolor=gray!15]{python}
+from pathlib import Path
+import socket
+root = Path('/mnt/shared')
+file = root / f"hello_{socket.gethostname()}.txt"
+file.write_text("¡Hola desde Raspberry Pi!")
+print("Escrito:", file)
+print("Contenido:", file.read_text())
+  \end{minted}
+  Ejecutar en al menos dos nodos y verificar que ambos archivos aparezcan.
+\end{frame}
+
+%------------------------------ actividad -------------------------
+\begin{frame}[fragile]{Actividad práctica (30 min)}
+  \begin{enumerate}
+    \item Exporta \texttt{/srv/nfs/data} desde el nodo head.
+    \item Monta en \texttt{/mnt/shared} en tus nodos.
+    \item Corre el script Python y confirma acceso simultáneo.
+    \item Subir una captura de pantalla de \texttt{ls /mnt/shared} al grupo.
+  \end{enumerate}
+\end{frame}
+
+%------------------------------ resumen ---------------------------
+\begin{frame}[fragile]{Resumen de la sesión}
+  \begin{itemize}
+    \item NFS habilita almacenamiento centralizado fácil de configurar.
+    \item Montaje persistente via \texttt{/etc/fstab} evita comandos manuales.
+    \item Pruebas de lectura/escritura aseguran permisos correctos.
+  \end{itemize}
+\end{frame}
+
+%------------------------------ recursos --------------------------
+\begin{frame}[fragile]{Recursos recomendados}
+  \begin{itemize}
+    \item \url{https://wiki.archlinux.org/title/NFS} (guía completa).
+    \item \url{https://help.ubuntu.com/lts/serverguide/serverguide.pdf} sección NFS.
+  \end{itemize}
+\end{frame}
+
+\end{document}

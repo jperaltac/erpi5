@@ -1,0 +1,120 @@
+% !TEX program = lualatex
+\documentclass[aspectratio=169,professionalfonts]{beamer}
+\input{../preamble.tex}
+
+\title[ClústerLab • Día 6]{Automatización y benchmarking}
+\subtitle{systemctl · job arrays · desempeño de matrices}
+\author{Equipo docente ClústerLab}
+\date{15 de agosto de 2025}
+
+\begin{document}
+
+%----------------------------- portada ----------------------------
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+%----------------------------- objetivos --------------------------
+\begin{frame}[fragile]{Objetivos de la sesión}
+  \begin{itemize}
+    \item Controlar servicios con \texttt{systemctl} (Slurm, NFS, Munge).
+    \item Construir job arrays paramétricos para pruebas automáticas.
+    \item Medir el rendimiento de multiplicación de matrices y graficar resultados.
+  \end{itemize}
+\end{frame}
+
+%----------------------------- agenda -----------------------------
+\begin{frame}[fragile]{Agenda (09:00 – 11:00)}
+  \begin{enumerate}
+    \item Recordatorio de servicios críticos.
+    \item \texttt{systemctl}: enable, start, status.
+    \item Job array de ejemplo con tamaños de matriz.
+    \item Script Python benchmarking + Matplotlib.
+    \item Actividad práctica.
+  \end{enumerate}
+\end{frame}
+
+%----------------------------- systemctl --------------------------
+\begin{frame}[fragile]{Gestión de servicios con \texttt{systemctl}}
+  \begin{minted}{bash}
+# Habilitar Slurm al arranque
+$ sudo systemctl enable slurmd
+$ sudo systemctl enable slurmctld
+
+# Comprobar estado
+$ systemctl status slurmd --no-pager
+  \end{minted}
+  \pause
+  Otros servicios importantes:
+  \begin{itemize}
+    \item \textbf{munge} – autenticación.
+    \item \textbf{nfs-server} – almacenamiento compartido.
+    \item \textbf{chrony} – sincronización de reloj.
+  \end{itemize}
+\end{frame}
+
+%----------------------------- job array desc ---------------------
+\begin{frame}[fragile]{Job array paramétrico}
+  \begin{itemize}
+    \item Queremos barrer tamaños de matriz \(N = 256,512,1024,2048\).
+    \item Cada tarea recibe un índice y lo traduce a \(N\).
+  \end{itemize}
+  \begin{minted}{bash}
+#SBATCH --array=0-3
+SIZES=(256 512 1024 2048)
+N=${SIZES[$SLURM_ARRAY_TASK_ID]}
+python3 matmul_bench.py $N
+  \end{minted}
+\end{frame}
+
+%----------------------------- matmul python ----------------------
+\begin{frame}[fragile]{Script \texttt{matmul\_bench.py}}
+  \begin{minted}[bgcolor=gray!15]{python}
+import sys, time, numpy as np
+N = int(sys.argv[1])
+A = np.random.rand(N, N).astype(np.float32)
+B = np.random.rand(N, N).astype(np.float32)
+start = time.perf_counter()
+C = A @ B  # multiplicación
+elapsed = time.perf_counter() - start
+print(N, elapsed)
+  \end{minted}
+  Salida se redirige a \texttt{results.txt} para cada tarea.
+\end{frame}
+
+%----------------------------- plot script ------------------------
+\begin{frame}[fragile]{Graficar resultados}
+  \begin{minted}[bgcolor=gray!15]{python}
+import pandas as pd, matplotlib.pyplot as plt
+
+df = pd.read_csv('results.txt', delim_whitespace=True,
+                 names=['N','time'])
+plt.plot(df['N'], df['time'], marker='o')
+plt.xlabel('Tamaño de matriz N')
+plt.ylabel('Tiempo (s)')
+plt.title('Benchmark matmul')
+plt.xscale('log'); plt.yscale('log')
+plt.savefig('matmul.png')
+  \end{minted}
+  Se puede ejecutar en el nodo head tras completarse el arreglo.
+\end{frame}
+
+%----------------------------- actividad -------------------------
+\begin{frame}[fragile]{Actividad práctica (30 min)}
+  \begin{enumerate}
+    \item Activa y revisa los servicios \texttt{slurmd} y \texttt{nfs-server} con \texttt{systemctl}.
+    \item Envía el arreglo de multiplicación de matrices.
+    \item Genera el gráfico \texttt{matmul.png} y sube la imagen.
+  \end{enumerate}
+\end{frame}
+
+%----------------------------- resumen ---------------------------
+\begin{frame}[fragile]{Resumen de la sesión}
+  \begin{itemize}
+    \item \texttt{systemctl} facilita la administración persistente de servicios.
+    \item Job arrays = automatización + reproducibilidad.
+    \item Benchmarks cuantifican la ganancia de paralelismo y optimizaciones.
+  \end{itemize}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,114 @@
+% !TEX program = lualatex
+\documentclass[aspectratio=169,professionalfonts]{beamer}
+\input{../preamble.tex}
+
+\title[ClústerLab • Día 5]{Instalación de Slurm}
+\subtitle{Controlador y demonios de cómputo}
+\author{Equipo docente ClústerLab}
+\date{13 de agosto de 2025}
+
+\begin{document}
+
+%------------------------------ portada ----------------------------
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+%------------------------------ objetivos --------------------------
+\begin{frame}[fragile]{Objetivos de la sesión}
+  \begin{itemize}
+    \item Instalar \texttt{slurmctld} (controlador) en el nodo head.
+    \item Instalar \texttt{slurmd} (demonio) en cada nodo de cálculo.
+    \item Generar y ajustar un \texttt{slurm.conf} mínimo para la Pi‑farm.
+    \item Verificar el estado de los nodos con \texttt{sinfo}.
+  \end{itemize}
+\end{frame}
+
+%------------------------------ agenda -----------------------------
+\begin{frame}[fragile]{Agenda (09:00 – 11:00)}
+  \begin{enumerate}
+    \item Paquetes necesarios y repositorios.
+    \item Configurar usuario \texttt{slurm} y directorios de estado.
+    \item Crear \texttt{slurm.conf} con la herramienta \texttt{configurator.html}.
+    \item Sincronizar la configuración en todos los nodos.
+    \item Comprobación con \texttt{scontrol} y \texttt{sinfo}.
+    \item Actividad práctica.
+  \end{enumerate}
+\end{frame}
+
+%------------------------------ install head -----------------------
+\begin{frame}[fragile]{Instalación en el nodo head}
+  \begin{minted}{bash}
+$ sudo apt install slurmctld slurmdbd munge
+$ sudo systemctl enable --now munge
+$ sudo systemctl enable slurmctld
+  \end{minted}
+  \begin{itemize}
+    \item \textbf{Munge} proporciona autenticación.
+    \item Copiar la clave \texttt{/etc/munge/munge.key} a los nodos.
+  \end{itemize}
+\end{frame}
+
+%------------------------------ install node -----------------------
+\begin{frame}[fragile]{Instalación en nodos de cálculo}
+  \begin{minted}{bash}
+$ sudo apt install slurmd munge
+$ sudo systemctl enable --now munge
+$ sudo systemctl enable slurmd
+  \end{minted}
+  Asegúrate de que la hora esté sincronizada (\texttt{chrony} o \texttt{systemd‑timesyncd}).
+\end{frame}
+
+%------------------------------ slurm.conf -------------------------
+\begin{frame}[fragile]{Ejemplo mínimo de \texttt{slurm.conf}}
+  \begin{minted}[bgcolor=gray!15]{ini}
+ClusterName=PiCluster
+SlurmctldHost=head
+MpiDefault=pmix
+ProctrackType=proctrack/linuxproc
+ReturnToService=1
+SlurmctldPort=6817
+SlurmdPort=6818
+StateSaveLocation=/var/spool/slurm-ctld
+SlurmdSpoolDir=/var/spool/slurmd
+NodeName=pi[21-38]  CPUs=4  RealMemory=4096  State=UNKNOWN
+PartitionName=main Nodes=pi[21-38] Default=YES MaxTime=01:00:00 State=UP
+  \end{minted}
+  Copiar este archivo a \texttt{/etc/slurm‐llnl/slurm.conf} en todos los nodos.
+\end{frame}
+
+%------------------------------ restart ----------------------------
+\begin{frame}[fragile]{Reiniciar servicios}
+  \begin{minted}{bash}
+# En el head
+$ sudo systemctl restart slurmctld
+# En cada nodo
+$ sudo systemctl restart slurmd
+  \end{minted}
+  \begin{block}{Verificar}
+    \begin{minted}{bash}
+$ sinfo -Nel
+    \end{minted}
+  \end{block}
+  Los nodos deberían aparecer como \texttt{idle}.
+\end{frame}
+
+%------------------------------ actividad -------------------------
+\begin{frame}[fragile]{Actividad práctica (30 min)}
+  \begin{enumerate}
+    \item Instala \texttt{slurmd} en tus dos nodos.
+    \item Copia \texttt{munge.key} y \texttt{slurm.conf} desde el head.
+    \item Usa \texttt{sinfo} para confirmar que los nodos están en línea.
+  \end{enumerate}
+\end{frame}
+
+%------------------------------ resumen ---------------------------
+\begin{frame}[fragile]{Resumen de la sesión}
+  \begin{itemize}
+    \item Slurm requiere Munge y un \texttt{slurm.conf} coherente.
+    \item Los servicios deben iniciarse tanto en controlador como en nodos.
+    \item \texttt{sinfo} es la primera herramienta de diagnóstico.
+  \end{itemize}
+\end{frame}
+
+\end{document}
