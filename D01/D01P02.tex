@@ -1,158 +1,141 @@
 % !TEX program = lualatex
-\documentclass[aspectratio=169, professionalfonts]{beamer}
-\usepackage[spanish]{babel}
-\usepackage{fontspec}
-\usepackage{graphicx}
-\usepackage{xcolor}
-\usepackage{listings}
-\usepackage{emoji}
-\setmainfont{Libertinus Serif}
-
-%--------- listings (estilo shell) -----------------
-\lstdefinestyle{shell}{
-  language=bash,
-  basicstyle=\ttfamily\small,
-  keywordstyle=\color{blue!70!black},
-  commentstyle=\color{gray},
-  showstringspaces=false
-}
+\documentclass[aspectratio=169,professionalfonts]{beamer}
+\input{../preamble.tex}
 
 \title[ClústerLab • Día 1]{Linux básico y primeros comandos}
-\subtitle{Hands-on en Raspberry Pi 5}
+\subtitle{Hands--on en Raspberry Pi 5}
 \author{Equipo docente ClústerLab}
-\date{4 de agosto 2025}
+\date{4 de agosto de 2025}
 
 \begin{document}
 
-%---------------- title ----------------------------
+%---------------- title ----------------------------%
 \begin{frame}[plain]
   \titlepage
 \end{frame}
 
-%---------------- SSH ------------------------------
-\begin{frame}[fragile]{Conectar a la Raspberry Pi}
-\begin{block}{Con pantalla y teclado}
-  Usuario predeterminado: \texttt{pi} \hfill Contraseña: \texttt{raspberry}
-\end{block}
-\pause
-\begin{block}{Desde tu laptop (SSH)}
-\begin{lstlisting}[style=shell]
-$ ssh pi@192.168.1.50      # IP de tu Pi
-# Primer login → cambiar contraseña
-\end{lstlisting}
-\end{block}
-\pause
-\small Si usas Windows, realiza la conexión desde Ubuntu WSL 2 o usa PuTTY.
+%---------------- SSH ------------------------------%
+\begin{frame}[fragile]{Conectar a la Raspberry Pi}
+  \begin{block}{Con pantalla y teclado}
+    Usuario: \texttt{pi} \hfill Contraseña: \texttt{raspberry}
+  \end{block}
+  \begin{infobox}
+    Para seguridad, cambia la contraseña en el primer login ↘︎
+  \end{infobox}
+  \begin{minted}{bash}
+$ ssh pi@192.168.1.50        # IP de tu Pi
+# ⇒ cambiar contraseña
+  \end{minted}
+  \small Si usas Windows, conéctate desde Ubuntu WSL 2 o usa PuTTY.
 \end{frame}
 
-%---------------- comandos esenciales --------------
+%---------------- comandos esenciales --------------%
 \begin{frame}[fragile]{Comandos esenciales}
-\begin{columns}[T]
-\begin{column}{0.55\textwidth}
-\begin{lstlisting}[style=shell]
+\begin{columns}[T,onlytextwidth]
+\column{0.55\linewidth}
+\begin{minted}{bash}
 $ pwd              # ruta actual
-$ ls -lh           # listar (human-readable)
-$ cd directorio    # cambiar directorio
+$ ls -lh           # listar (legible)
+$ cd directorio    # cambiar dir.
 $ mkdir data       # crear carpeta
 $ touch notas.txt  # archivo vacío
 $ cat notas.txt    # ver contenido
 $ rm notas.txt     # borrar
 $ man ls           # ayuda
-\end{lstlisting}
-\end{column}
-\begin{column}{0.4\textwidth}
-% TODO: imagen terminal
-\includegraphics[width=\linewidth]{example-image-b}
-\end{column}
+\end{minted}
+
+\column{0.44\linewidth}
+\centering
+\includegraphics[width=\linewidth]{example-image}
 \end{columns}
 \end{frame}
 
-%---------------- permisos -------------------------
+%---------------- permisos -------------------------%
 \begin{frame}[fragile]{Permisos de archivos}
-\begin{lstlisting}[style=shell]
+\begin{minted}{bash}
 $ ls -l backup.sh
 -rwxr-xr-- 1 pi pi  54 jul  8 12:30 backup.sh
-\end{lstlisting}
+\end{minted}
+
 \begin{itemize}
-  \item \texttt{rwx}: permisos del propietario
+  \item \texttt{rwx}: propietario
   \item \texttt{r-x}: grupo
   \item \texttt{r--}: otros
 \end{itemize}
-\pause
-\textbf{Cambiar permisos / dueño}
-\begin{lstlisting}[style=shell]
+
+\begin{warnbox}
+  ¡Nunca des permisos 777 salvo que sepas lo que haces!
+\end{warnbox}
+
+\begin{minted}{bash}
 $ chmod u+x backup.sh        # añadir ejec.
-$ sudo chown root:root file  # cambiar propietario
-\end{lstlisting}
+$ sudo chown root:root file  # nuevo dueño
+\end{minted}
 \end{frame}
 
-%---------------- variables & echo -----------------
-\begin{frame}{Variables y \texttt{echo}}
-\begin{lstlisting}[style=shell]
+%---------------- variables & echo -----------------%
+\begin{frame}[fragile]{Variables y \texttt{echo}}
+\begin{minted}{bash}
 $ NODENAME=$(hostname)
 $ echo "Hola, estoy en $NODENAME"
-\end{lstlisting}
-\pause
-\textbf{Redirección y pipes}
-\begin{lstlisting}[style=shell]
-$ ls -l /etc > listado.txt   # salida a archivo
+\end{minted}
+
+\begin{minted}{bash}
+$ ls -l /etc > listado.txt   # redirige salida
 $ cat listado.txt | less     # pipe
-\end{lstlisting}
+\end{minted}
 \end{frame}
 
-%---------------- actividad ------------------------
-\begin{frame}{Actividad práctica (30 min)}
+%---------------- actividad ------------------------%
+\begin{frame}{Actividad práctica (30 min)}
 \begin{enumerate}
-  \item Crear la estructura:\newline
-        \texttt{~/proyectos/\{scripts,datos,logs\}}
+  \item Crear \texttt{~/proyectos/\{scripts,datos,logs\}}
   \item Escribir \texttt{backup.sh} que:
     \begin{itemize}
-      \item Reciba nombre de carpeta (\$1)
-      \item Comprima con \texttt{tar} y genere \texttt{.tar.gz}
-      \item Mueva el archivo a \texttt{~/backups}
+      \item reciba carpeta (\$1)
+      \item comprima con \texttt{tar} \(\to\) \texttt{.tar.gz}
+      \item mueva a \texttt{~/backups}
     \end{itemize}
-  \item Añadir bit de ejecución y probarlo.
+  \item Añadir bit de ejecución y probar.
 \end{enumerate}
-\pause
-\small\emoji{bulb} Tip: usa \texttt{\$(date +\%F)} para sellar con la fecha.
+
+\small\faLightbulb\; Tip: usa \texttt{\$(date +\%F)} para sellar fecha.
 \end{frame}
 
-%---------------- cheatsheet -----------------------
-\begin{frame}{Mini cheatsheet}
-\begin{columns}[T]
-\begin{column}{0.48\textwidth}
+%---------------- cheatsheet -----------------------%
+\begin{frame}[fragile]{Mini cheatsheet}
+\begin{columns}[T,onlytextwidth]
+\column{0.50\linewidth}
 \begin{itemize}
-  \item \textbf{Ver procesos}: \texttt{htop}, \texttt{ps aux}
-  \item \textbf{Uso de disco}: \texttt{df -h}, \texttt{du -sh *}
-  \item \textbf{Búsqueda}: \texttt{grep}, \texttt{find}
-  \item \textbf{Red}: \texttt{ip a}, \texttt{ping}, \texttt{hostname -I}
+  \item \textbf{Procesos}: \mintinline{bash}{htop}, \mintinline{bash}{ps aux}
+  \item \textbf{Disco}: \mintinline{bash}{df -h}, \mintinline{bash}{du -sh *}
+  \item \textbf{Buscar}: \mintinline{bash}{grep}, \mintinline{bash}{find}
+  \item \textbf{Red}: \mintinline{bash}{ip a}, \mintinline{bash}{ping}
 \end{itemize}
-\end{column}
-\begin{column}{0.48\textwidth}
+
+\column{0.50\linewidth}
 \begin{itemize}
-  \item \textbf{Editar archivos}: \texttt{nano}, \texttt{vim}
-  \item \textbf{Actualizar apt}: \texttt{sudo apt update && apt upgrade}
-  \item \textbf{Historial}: \texttt{history}, \texttt{!42}
-  \item \textbf{Autocompletar}: \texttt{TAB}
+  \item \textbf{Editar}: \mintinline{bash}{nano}, \mintinline{bash}{vim}
+  \item \textbf{Actualizar}: \mintinline{bash}{sudo apt update && apt upgrade}
+  \item \textbf{Historial}: \mintinline{bash}{history}, \mintinline{bash}{!42}
+  \item \textbf{Autocompletar}: ↹ (TAB)
 \end{itemize}
-\end{column}
 \end{columns}
 \end{frame}
 
-%---------------- recursos -------------------------
+%---------------- recursos -------------------------%
 \begin{frame}{Recursos recomendados}
 \begin{itemize}
-  \item «The Linux Command Line», W. Shotts Jr. (gratuito).
-  \item https://linuxjourney.com (interactivo).
-  \item Documentación oficial Raspberry Pi OS.
+  \item \emph{The Linux Command Line}, W. Shotts Jr. (ebook gratuito)
+  \item \url{https://linuxjourney.com} — interactivo
+  \item Documentación oficial de Raspberry Pi OS
 \end{itemize}
 \end{frame}
 
-%---------------- cierre ---------------------------
-\begin{frame}[standout]
-  ¡Buen trabajo!\\
-  Próximo bloque: redes IP y claves SSH
+%---------------- cierre ---------------------------%
+\begin{frame}[plain]
+  \centering \Huge ¡Buen trabajo!\\[1ex]
+  Siguiente bloque: redes IP y claves SSH
 \end{frame}
 
 \end{document}
-

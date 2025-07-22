@@ -1,17 +1,11 @@
 % !TEX program = lualatex
-\documentclass[aspectratio=169, professionalfonts]{beamer}
-\usepackage[spanish]{babel}
-\usepackage{fontspec}
-\usepackage{graphicx}
-\usepackage{mwe}            % imágenes de ejemplo
-\usepackage{xcolor}
-\usepackage{emoji}
-\setmainfont{Libertinus Serif}
+\documentclass[aspectratio=169,professionalfonts]{beamer}
+\input{../preamble.tex}
 
-\title[ClústerLab • Día 1]{ClústerLab 2025\\\huge Introducción y Motivación}
-\subtitle{Escuela de Computación Distribuida – ITM Medellín}
+\title[ClústerLab • Día 1]{Linux básico y primeros comandos}
+\subtitle{Hands--on en Raspberry Pi 5}
 \author{Equipo docente ClústerLab}
-\date{4 de agosto 2025}
+\date{4 de agosto de 2025}
 
 %--------------------------------------------------------------------
 \begin{document}
@@ -23,6 +17,7 @@
 
 %------------------------ objetivos ---------------------------------
 \begin{frame}{Objetivos del curso}
+  Una visión muy general de los objetivos de este curso, es que al final del curso podremos tener conocimientos básicos sobre:
   \begin{itemize}
     \item ¿Qué es un \emph{clúster}? ¿Por qué importa?
     \item Configurar un mini-clúster con Raspberry Pi 5.
@@ -43,63 +38,169 @@
       \begin{itemize}
         \item Alta disponibilidad y escalabilidad \emoji{chart-increasing}
         \item Paralelismo y balanceo de carga
-        \item Ciencia de datos, simulaciones, IA …
+        \item Ciencia de datos, simulaciones, IA.
+        \begin{itemize}
+          \item Ciencia
+          \item Estado
+          \item Instituciones Privadas
+        \end{itemize}
       \end{itemize}
     \end{column}
     \begin{column}{0.4\textwidth}
       \centering
-      \includegraphics[width=\linewidth]{example-image} % imagen genérica
+      \includegraphics[width=\linewidth]{hpc1.png} % imagen genérica
     \end{column}
   \end{columns}
+  \begin{block}{Spolier}
+    La segunda semana jugaremos con real-HPC cluster para probar algunas cosas.
+  \end{block}
 \end{frame}
 
 %------------------------ por qué raspberry -------------------------
 \begin{frame}{¿Por qué Raspberry Pi 5?}
   \begin{itemize}
-    \item Bajo costo y consumo $\approx$ 5–7 W.
+    \item Bajo costo y consumo $\approx$ 5--7 [W] de potencia.
     \item Soporte completo Linux + comunidad enorme.
-    \item Perfecta para aprender HPC en pequeño.
-    \item ¡Te la llevas a casa! \emoji{rocket}
+    \item Perfecta para aprender HPC en \textit{pequeño}.
+    \item ¡Quedás listo/a para trabajar en ambientes Linux! \emoji{rocket}
   \end{itemize}
   \vspace{0.4em}
   \centering
-  \includegraphics[width=0.7\linewidth]{example-image-duck} % otra imagen demo
+  \includegraphics[width=0.5\linewidth]{rpi5-cluster.png} % otra imagen demo
 \end{frame}
 
 %------------------------ agenda del día ----------------------------
-\begin{frame}{Agenda Día 1 (09:00–13:00)}
+\begin{frame}{Agenda Día 1 (09:00--13:00)}
   \begin{enumerate}
-    \item 09:00 – 09:15  Bienvenida y motivación.
-    \item 09:15 – 10:30  Encender la Pi + primeros comandos Linux.
-    \item 10:45 – 12:00  Bash I (variables, redirección).
-    \item 12:00 – 13:00  Actividad: árbol de carpetas + backup.
+    \item 09:00 -- 09:15  Bienvenida y motivación.
+    \item 09:15 -- 10:30  Encender la Pi + primeros comandos Linux.
+    \item 10:45 -- 12:00  Bash I (variables, redirección).
+    \item 12:00 -- 13:00  Actividad: árbol de carpetas + backup.
   \end{enumerate}
 \end{frame}
 
 %------------------------ requisitos -------------------------------
-\begin{frame}{Requisitos para hoy}
+\begin{frame}[fragile]{Requisitos para hoy}
   \begin{itemize}
-    \item Laptop con Wi-Fi y cliente SSH (Linux/macOS) \textbf{o} WSL 2 en Windows.
+    \item computador con acceso a la internet y cliente SSH (Linux/macOS) \textbf{o} WSL 2 en Windows.
     \item Raspberry Pi 5 con SD Card (≥16 GB) y fuente.
-    \item Cable LAN y acceso al switch del aula.
+    \item Implementos de la Raspberry Pi:
+    \begin{itemize}
+      \item Cable para Display
+      \item Cable re RED + switch
+      \item Acceso a Internet por wifi.
+    \end{itemize}
   \end{itemize}
-  \alert{En Windows usa \textbf{WSL 2 + Ubuntu}.}
+  \alert{En Windows es recomendable usar \textbf{WSL 2 + Ubuntu}.}
 \end{frame}
 
 %------------------------ WSL --------------------------------------
-\begin{frame}{WSL 2 en Windows (instalación rápida)}
-  \begin{enumerate}
-    \item Activar «Sub-sistema Windows para Linux» y «Plataforma VM».
-    \item En PowerShell (Admin): \texttt{wsl --install Ubuntu}
-    \item Reiniciar, abrir Ubuntu WSL y crear usuario.
-    \item Instalar \texttt{openssh-client}:\newline
-          \texttt{\$ sudo apt install openssh-client}
-  \end{enumerate}
-  \pause
-  \begin{block}{Conexión SSH (ejemplo)}
-\texttt{\$ ssh pi@192.168.1.50}
-  \end{block}
+\begin{frame}{¿Qué es WSL?}
+  \begin{itemize}
+    \item WSL = Windows Subsystem for Linux.
+    \item Permite correr distribuciones Linux (Ubuntu, Debian, etc.) dentro de Windows.
+    \item Integra comandos de Linux en Windows, sin usar máquinas virtuales pesadas.
+    \item Ideal para aprender Linux, programar, usar herramientas científicas.
+  \end{itemize}
 \end{frame}
+
+\begin{frame}{Instalar WSL 2 (paso a paso)}
+  \begin{enumerate}
+    \item Abrir PowerShell como administrador.
+    \item Ejecutar: \texttt{wsl --install}
+    \item Esperar instalación y reiniciar.
+    \item Se instalará Ubuntu por defecto (puede cambiarse).
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Primer inicio de Ubuntu WSL}
+  \begin{itemize}
+    \item Al abrir Ubuntu WSL, te pedirá crear:
+      \begin{itemize}
+        \item Nombre de usuario.
+        \item Contraseña.
+      \end{itemize}
+    \item Esto crea tu cuenta en Linux dentro de Windows.
+    \item Puedes empezar a usar comandos como: \texttt{ls}, \texttt{pwd}, \texttt{cd}, etc.
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Primeros comandos en Linux}
+  \begin{itemize}
+    \item \texttt{ls} – lista archivos.
+    \item \texttt{cd} – cambia de directorio.
+    \item \texttt{pwd} – muestra dónde estás.
+    \item \texttt{mkdir} – crea carpetas.
+    \item \texttt{nano} o \texttt{vim} – editores de texto.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Instalar programas con APT}
+  \begin{itemize}
+    \item WSL usa el sistema de paquetes de Ubuntu.
+    \item Instalar programas con:
+      \texttt{\$ sudo apt install nombre\_paquete}
+    \item Ejemplo: \texttt{sudo apt install openssh-client}
+    \item También puedes instalar: \texttt{git}, \texttt{python3}, \texttt{g++}, etc.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Ver archivos de Windows desde WSL}
+  \begin{itemize}
+    \item WSL puede ver el sistema de archivos de Windows.
+    \item Se encuentra en: \texttt{/mnt/c}, \texttt{/mnt/d}, etc.
+    \item Ejemplo:
+      \begin{itemize}
+        \item \texttt{cd /mnt/c/Users/tu\_usuario/Downloads}
+        \item Accedes a tu carpeta de Descargas.
+      \end{itemize}
+    \item Puedes copiar, mover, editar desde WSL.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Conexión por SSH}
+  \begin{itemize}
+    \item SSH permite conectarse a otros computadores Linux de forma segura.
+    \item Instalamos el cliente con:
+      \texttt{sudo apt install openssh-client}
+    \item Ejemplo de conexión:
+      \texttt{ssh usuario@IP\_remota}
+    \item Muy útil para acceder a servidores, Raspberry Pi, etc.
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Python y Jupyter en WSL}
+  \begin{itemize}
+    \item Puedes instalar Python con:
+      \texttt{sudo apt install python3 python3-pip}
+    \item Luego instalar Jupyter:
+      \texttt{pip install notebook}
+    \item Ejecutar: \texttt{jupyter notebook}
+    \item Abre automáticamente en el navegador de Windows.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Usar VSCode con WSL}
+  \begin{itemize}
+    \item Instalar extensión "Remote - WSL" en VSCode.
+    \item Abre VSCode y ejecuta: \texttt{code .} en WSL.
+    \item VSCode se conecta a WSL y trabaja directamente con archivos Linux.
+    \item Ideal para programar en C, Python, LaTeX, etc.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Comandos útiles para principiantes}
+  \begin{itemize}
+    \item \texttt{sudo apt update} – actualiza lista de paquetes.
+    \item \texttt{sudo apt upgrade} – instala actualizaciones.
+    \item \texttt{history} – muestra comandos usados.
+    \item \texttt{clear} – limpia la pantalla.
+    \item \texttt{exit} – salir de la terminal.
+  \end{itemize}
+\end{frame}
+
 
 %------------------------ kit ------------------------
 \begin{frame}{Material necesario (checklist)}
@@ -113,7 +214,7 @@
       \end{itemize}
     \end{column}
     \begin{column}{0.48\textwidth}
-      \includegraphics[width=\linewidth]{example-image-b}
+      \includegraphics[width=\linewidth]{pi-implements.png}
     \end{column}
   \end{columns}
 \end{frame}

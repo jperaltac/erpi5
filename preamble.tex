@@ -38,14 +38,14 @@
 \usepackage{tcolorbox}
 \tcbuselibrary{skins, breakable}
 % Warning box
-\newtcolorbox{warnbox}{
-  colback=clorange!10,
-  colframe=clorange!80!black,
-  breakable,
-  title={\faWarning\quad Advertencia},
-  fonttitle=\bfseries,
-  left=2mm, right=2mm, top=1mm, bottom=1mm
-}
+%\newtcolorbox{warnbox}{
+%  colback=clorange!10,
+%  colframe=clorange!80!black,
+%  breakable,
+%  title={\faWarning\quad Advertencia},
+%  fonttitle=\bfseries,
+%  left=2mm, right=2mm, top=1mm, bottom=1mm
+%}
 % Information box
 \newtcolorbox{infobox}{
   colback=clblue!5,
@@ -58,6 +58,17 @@
 
 % ---------- Icons ----------
 \usepackage{fontawesome5}
+
+\newtcolorbox{warnbox}{
+  colback=clorange!10,
+  colframe=clorange!80!black,
+  breakable,
+  title={\faExclamationTriangle\quad Advertencia}, % <-- cambio aquí
+  fonttitle=\bfseries,
+  left=2mm, right=2mm, top=1mm, bottom=1mm
+}
+
+\usepackage{emoji}
 
 % ---------- Misc tweaks ----------
 \graphicspath{{figures/}}
