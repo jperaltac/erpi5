@@ -4,9 +4,9 @@ PDFS=$(TEXFILES:.tex=.pdf)
 all: $(PDFS)
 
 %.pdf: %.tex
-	lualatex -interaction=nonstopmode $<
+	lualatex -interaction=nonstopmode -halt-on-error -shell-escape $<
 
 clean:
-$(RM) $(PDFS) *.log *.aux *.toc *.out
+	$(RM) $(PDFS) *.log *.aux *.toc *.out
 
 .PHONY: all clean
