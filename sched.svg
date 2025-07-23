@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1100"
+   height="650"
+   version="1.1"
+   id="svg37"
+   sodipodi:docname="sched.svg"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview37"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.2061538"
+     inkscape:cx="549.68112"
+     inkscape:cy="333.29082"
+     inkscape:window-width="1920"
+     inkscape:window-height="1000"
+     inkscape:window-x="0"
+     inkscape:window-y="339"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg37" />
+  <defs
+     id="defs1">
+    <marker
+       id="arrow"
+       markerWidth="10"
+       markerHeight="10"
+       refX="10"
+       refY="5"
+       orient="auto"
+       markerUnits="strokeWidth">
+      <path
+         d="M0,0 L10,5 L0,10 z"
+         fill="gray"
+         id="path1" />
+    </marker>
+    <style
+       id="style1">
+      .bubble { font-family: Helvetica, Arial, sans-serif; font-size: 13px; text-anchor: middle; dominant-baseline: middle; }
+      .label  { font-size: 11px; }
+    </style>
+  </defs>
+  <!-- Connections -->
+  <line
+     x1="150"
+     y1="100"
+     x2="479.52808"
+     y2="100"
+     stroke="#808080"
+     marker-end="url(#arrow)"
+     id="line1"
+     style="stroke-width:1.81529;stroke-dasharray:none" />
+  <line
+     x1="550"
+     y1="100"
+     x2="880.35712"
+     y2="100"
+     stroke="#808080"
+     marker-end="url(#arrow)"
+     id="line2"
+     style="stroke-width:1.81757;stroke-dasharray:none" />
+  <line
+     x1="950.02148"
+     y1="99.914024"
+     x2="220.91731"
+     y2="282.19006"
+     stroke="#808080"
+     marker-end="url(#arrow)"
+     id="line3"
+     style="stroke-width:1.82276;stroke-dasharray:none" />
+  <line
+     x1="150"
+     y1="300"
+     x2="477.0408"
+     y2="300"
+     stroke="#808080"
+     marker-end="url(#arrow)"
+     id="line4"
+     style="stroke-width:1.80843;stroke-dasharray:none" />
+  <line
+     x1="550"
+     y1="300"
+     x2="880.35712"
+     y2="300"
+     stroke="#808080"
+     marker-end="url(#arrow)"
+     id="line5"
+     style="stroke-width:1.81757;stroke-dasharray:none" />
+  <line
+     x1="950.06799"
+     y1="299.86401"
+     x2="610.87616"
+     y2="469.45996"
+     stroke="#808080"
+     marker-end="url(#arrow)"
+     id="line6"
+     style="stroke-width:1.69596;stroke-dasharray:none" />
+  <line
+     x1="550"
+     y1="500"
+     x2="875.38263"
+     y2="500"
+     stroke="#808080"
+     marker-end="url(#arrow)"
+     id="line7"
+     style="stroke-width:1.80384;stroke-dasharray:none" />
+  <!-- Week 1 bubbles -->
+  <circle
+     cx="150"
+     cy="100"
+     r="70"
+     fill="#ffdfdf"
+     stroke="black"
+     id="circle7" />
+  <text
+     x="150"
+     y="70"
+     class="bubble"
+     id="text7"><tspan
+       style="font-weight:bold"
+       id="tspan37">W1 Lunes</tspan></text>
+  <text
+     x="115.17857"
+     y="91.658165"
+     class="label"
+     id="text8">Pi setup</text>
+  <text
+     x="113.52041"
+     y="107.48724"
+     class="label"
+     id="text9">Linux básico</text>
+  <text
+     x="123.46939"
+     y="163.94133"
+     class="label"
+     id="text10"
+     style="fill:#782121"><tspan
+       style="font-weight:bold"
+       id="tspan45">Individual</tspan></text>
+  <circle
+     cx="550"
+     cy="100"
+     r="70"
+     fill="#ffdfdf"
+     stroke="black"
+     id="circle10" />
+  <text
+     x="550"
+     y="70"
+     class="bubble"
+     id="text11"><tspan
+       style="font-weight:bold"
+       id="tspan38">W1 Miér.</tspan></text>
+  <text
+     x="515.17859"
+     y="113.21429"
+     class="label"
+     id="text12">Redes &amp; Bash</text>
+  <text
+     x="528.44385"
+     y="161.37756"
+     class="label"
+     id="text13"
+     style="fill:#800000"><tspan
+       style="font-weight:bold"
+       id="tspan46">GRUPAL</tspan></text>
+  <circle
+     cx="950"
+     cy="100"
+     r="70"
+     fill="#ffdfdf"
+     stroke="black"
+     id="circle13" />
+  <text
+     x="950"
+     y="70"
+     class="bubble"
+     id="text14"><tspan
+       style="font-weight:bold"
+       id="tspan39">W1 Vier.</tspan></text>
+  <text
+     x="924.29846"
+     y="98.290817"
+     class="label"
+     id="text15">Diag. Pi OS</text>
+  <!-- Week 2 bubbles -->
+  <circle
+     cx="150"
+     cy="300"
+     r="70"
+     fill="#d5f5d5"
+     stroke="black"
+     id="circle16" />
+  <text
+     x="150"
+     y="270"
+     class="bubble"
+     id="text17"><tspan
+       style="font-weight:bold"
+       id="tspan40">W2 Lunes</tspan></text>
+  <text
+     x="125.12755"
+     y="292.48724"
+     class="label"
+     id="text18">Cluster build</text>
+  <text
+     x="130.10204"
+     y="308.31631"
+     class="label"
+     id="text19">Pi físicos</text>
+  <circle
+     cx="550"
+     cy="300"
+     r="70"
+     fill="#dfe7ff"
+     stroke="black"
+     id="circle20" />
+  <text
+     x="550"
+     y="270"
+     class="bubble"
+     id="text21"><tspan
+       style="font-weight:bold"
+       id="tspan41">W2 Miér.</tspan></text>
+  <text
+     x="514.34949"
+     y="287.51276"
+     class="label"
+     id="text22">SLURM Leftraru</text>
+  <text
+     x="540.88013"
+     y="303.34183"
+     class="label"
+     id="text23">Jobs</text>
+  <circle
+     cx="950"
+     cy="300"
+     r="70"
+     fill="#d5f5d5"
+     stroke="black"
+     id="circle24"
+     style="fill:#e0e8ff;fill-opacity:1" />
+  <text
+     x="950"
+     y="270"
+     class="bubble"
+     id="text25"><tspan
+       style="font-weight:bold"
+       id="tspan42">W2 Vier.</tspan></text>
+  <text
+     x="914.34949"
+     y="292.48724"
+     class="label"
+     id="text26">mpi4py &amp; kickoff</text>
+  <text
+     x="934.24744"
+     y="316.60715"
+     class="label"
+     id="text27">Proyecto</text>
+  <!-- Week 3 bubbles -->
+  <circle
+     cx="550"
+     cy="500"
+     r="70"
+     fill="#d5f5d5"
+     stroke="black"
+     id="circle28"
+     style="fill:#e0e8ff;fill-opacity:1" />
+  <text
+     x="550"
+     y="470"
+     class="bubble"
+     id="text29"><tspan
+       style="font-weight:bold"
+       id="tspan43">W3 Miér.</tspan></text>
+  <text
+     x="521.81122"
+     y="509.06888"
+     class="label"
+     id="text30">Dev &amp; análisis</text>
+  <circle
+     cx="950"
+     cy="500"
+     r="70"
+     fill="#d5f5d5"
+     stroke="black"
+     id="circle31"
+     style="fill:#e0e8ff;fill-opacity:1" />
+  <text
+     x="950"
+     y="470"
+     class="bubble"
+     id="text32"><tspan
+       style="font-weight:bold"
+       id="tspan44">W3 Vier.</tspan></text>
+  <text
+     x="911.86224"
+     y="504.92346"
+     class="label"
+     id="text33">Presentaciones</text>
+  <!-- Legend -->
+  <rect
+     x="50"
+     y="580"
+     width="15"
+     height="15"
+     fill="#ffdfdf"
+     stroke="black"
+     id="rect34" />
+  <text
+     x="70"
+     y="592"
+     class="label"
+     id="text35">Raspberry Pi work</text>
+  <rect
+     x="250"
+     y="580"
+     width="15"
+     height="15"
+     fill="#dfe7ff"
+     stroke="black"
+     id="rect35" />
+  <text
+     x="270"
+     y="592"
+     class="label"
+     id="text36">Cluster externo</text>
+  <rect
+     x="450"
+     y="580"
+     width="15"
+     height="15"
+     fill="#d5f5d5"
+     stroke="black"
+     id="rect36" />
+  <text
+     x="470"
+     y="592"
+     class="label"
+     id="text37">Trabajo grupal</text>
+  <text
+     x="524.84924"
+     y="562.22931"
+     class="label"
+     id="text13-1"
+     style="font-size:11px;fill:#800000"><tspan
+       style="font-weight:bold"
+       id="tspan46-5">GRUPAL</tspan></text>
+  <text
+     x="926.91302"
+     y="561.84412"
+     class="label"
+     id="text13-4"
+     style="font-size:11px;fill:#800000"><tspan
+       style="font-weight:bold"
+       id="tspan46-7">GRUPAL</tspan></text>
+  <text
+     x="129.2421"
+     y="361.62979"
+     class="label"
+     id="text13-5"
+     style="font-size:11px;fill:#800000"><tspan
+       style="font-weight:bold"
+       id="tspan46-69">GRUPAL</tspan></text>
+  <text
+     x="930.16559"
+     y="158.964"
+     class="label"
+     id="text13-7"
+     style="font-size:11px;fill:#800000"><tspan
+       style="font-weight:bold"
+       id="tspan46-4">GRUPAL</tspan></text>
+  <text
+     x="522.52814"
+     y="357.70181"
+     class="label"
+     id="text10-2"
+     style="font-size:11px;fill:#782121"><tspan
+       style="font-weight:bold"
+       id="tspan45-5">Individual</tspan></text>
+  <text
+     x="924.28064"
+     y="359.35999"
+     class="label"
+     id="text10-2-7"
+     style="font-size:11px;fill:#782121"><tspan
+       style="font-weight:bold"
+       id="tspan45-5-4">Individual</tspan></text>
+</svg>
