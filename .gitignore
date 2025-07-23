@@ -19,3 +19,6 @@
 # Build directories
 build/
 
+website/node_modules
+website/build
+website/package-lock.json
