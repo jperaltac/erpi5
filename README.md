@@ -20,5 +20,7 @@ This project is distributed under the terms of the GNU General Public License v3
 ## Website
 
 A minimal [Docusaurus](https://docusaurus.io) site is provided under `website/`.
-Run `npm install` inside that folder and `npm run build` to generate the static
-site that can be published on GitHub Pages.
+Run `npm install` in that folder followed by `npm run build` to generate the
+static site for GitHub Pages. Update the organisation name and `baseUrl` in
+`website/docusaurus.config.js` if your repository lives under a different
+account.
