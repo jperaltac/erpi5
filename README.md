@@ -16,3 +16,9 @@ Ensure `lualatex` and the required fonts (Inter, Fira Code, Libertinus) are inst
 ## License
 
 This project is distributed under the terms of the GNU General Public License v3. See [LICENSE](LICENSE) for details.
+
+## Website
+
+A minimal [Docusaurus](https://docusaurus.io) site is provided under `website/`.
+Run `npm install` inside that folder and `npm run build` to generate the static
+site that can be published on GitHub Pages.
