@@ -1,7 +1,0 @@
-\begin{MintedVerbatim}[commandchars=\\\{\}]
-\PYGZdl{}\PYG{+w}{ }sudo\PYG{+w}{ }apt\PYG{+w}{ }install\PYG{+w}{ }sshfs\PYG{+w}{         }\PYG{c+c1}{\PYGZsh{} si es necesario}
-\PYGZdl{}\PYG{+w}{ }mkdir\PYG{+w}{ }\PYGZti{}/pi\PYGZus{}share
-\PYGZdl{}\PYG{+w}{ }sshfs\PYG{+w}{ }pi@node2:/home/pi\PYG{+w}{ }\PYGZti{}/pi\PYGZus{}share
-...
-\PYGZdl{}\PYG{+w}{ }fusermount\PYG{+w}{ }\PYGZhy{}u\PYG{+w}{ }\PYGZti{}/pi\PYGZus{}share\PYG{+w}{       }\PYG{c+c1}{\PYGZsh{} desmontar}
-\end{MintedVerbatim}

@@ -1,6 +1,0 @@
-\begin{MintedVerbatim}[commandchars=\\\{\}]
-\PYGZdl{}\PYG{+w}{ }vcgencmd\PYG{+w}{ }measure\PYGZus{}temp
-\PYG{n+nv}{temp}\PYG{o}{=}\PYG{l+m}{42}.0\PYG{err}{\PYGZsq{}}C
-\PYGZdl{}\PYG{+w}{ }vcgencmd\PYG{+w}{ }measure\PYGZus{}volts
-\PYG{n+nv}{volt}\PYG{o}{=}\PYG{l+m}{0}.86V
-\end{MintedVerbatim}
