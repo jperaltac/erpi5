@@ -1,3 +1,0 @@
-\begin{MintedVerbatim}[commandchars=\\\{\}]
-watch\PYG{+w}{ }\PYGZhy{}n\PYG{+w}{ }\PYG{l+m}{2}\PYG{+w}{ }vcgencmd\PYG{+w}{ }measure\PYGZus{}temp
-\end{MintedVerbatim}

@@ -1,4 +1,0 @@
-\begin{MintedVerbatim}[commandchars=\\\{\}]
-\PYGZdl{}\PYG{+w}{ }sudo\PYG{+w}{ }apt\PYG{+w}{ }update\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }sudo\PYG{+w}{ }apt\PYG{+w}{ }full\PYGZhy{}upgrade\PYG{+w}{ }\PYGZhy{}y
-\PYGZdl{}\PYG{+w}{ }sudo\PYG{+w}{ }raspi\PYGZhy{}config\PYG{+w}{      }\PYG{c+c1}{\PYGZsh{} menú de configuración}
-\end{MintedVerbatim}
