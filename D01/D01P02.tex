@@ -14,80 +14,352 @@
   \titlepage
 \end{frame}
 
-%---------------- SSH ------------------------------%
-\begin{frame}[fragile]{Conectar a la Raspberry Pi}
-  \begin{block}{Con pantalla y teclado}
-    Usuario: \texttt{pi} \hfill Contraseña: \texttt{raspberry}
-  \end{block}
-  \begin{infobox}
-    Para seguridad, cambia la contraseña en el primer login ↘︎
-  \end{infobox}
-  \begin{minted}{bash}
-$ ssh pi@192.168.1.50        # IP de tu Pi
-$ passwd #  cambiar contraseña (not necessary)
-  \end{minted}
-  \small Si usas Windows, conéctate desde Ubuntu WSL 2 o usa PuTTY.
+\begin{frame}[fragile]{Primer arranque en aula}
+\begin{itemize}
+  \item Usaremos \textbf{una} Raspberry Pi por equipo, con \textbf{pantalla, teclado y mouse}.
+  \item Objetivos del día:
+  \begin{itemize}
+    \item Navegar el sistema de archivos y la terminal.
+    \item Instalar utilidades básicas.
+    \item Dejar la Pi \textit{lista} para el día 2 (SSH y trabajo remoto).
+  \end{itemize}
+\end{itemize}
+\begin{minted}{bash}
+# Usuario por defecto (si aplica a tu imagen)
+user: pi    pass: raspberry
+\end{minted}
+\begin{infobox}
+No activaremos SSH hoy; lo veremos al final y se usará desde el día 2.
+\end{infobox}
 \end{frame}
 
-%---------------- comandos esenciales --------------%
-\begin{frame}[fragile]{Comandos esenciales}
+%---------------- estructura FS ------------------------------%
+\begin{frame}[fragile]{Estructura del sistema de archivos}
 \begin{columns}[T,onlytextwidth]
 \column{0.55\linewidth}
 \begin{minted}{bash}
-$ pwd              # ruta actual
-$ ls -lh           # listar (legible)
-$ cd directorio    # cambiar dir.
-$ mkdir data       # crear carpeta
-$ touch notas.txt  # archivo vacío
-$ cat notas.txt    # ver contenido
-$ rm notas.txt     # borrar
-$ man ls           # ayuda
+/                    # raíz
+/home/pi             # tu carpeta
+/etc                 # configuración del sistema
+/var/log             # logs
+/opt                 # software opcional
+/tmp                 # temporales
+/boot                # arranque (Raspberry)
 \end{minted}
-
-\column{0.44\linewidth}
-\centering
-\includegraphics[width=\linewidth]{simple_term.png}
+\begin{minted}{bash}
+$ ls -l /
+$ tree -L 1 /home/pi   # requiere 'tree'
+\end{minted}
+\column{0.45\linewidth}
+\begin{infobox}
+Carpetas “del sistema” (\texttt{/etc}, \texttt{/var}) vs “tu espacio” (\texttt{/home/pi}).
+\end{infobox}
 \end{columns}
 \end{frame}
 
-%---------------- permisos -------------------------%
-\begin{frame}[fragile]{Permisos de archivos}
+%---------------- comandos esenciales 2 ----------------------%
+\begin{frame}[fragile]{Comandos esenciales (ampliado)}
+\begin{minted}{bash}
+$ ls -lah         # tamaños humanos, muestra ocultos
+$ cd ..           # subir un nivel
+$ mv a b          # renombrar o mover
+$ cp a b          # copiar
+$ cp -r dir1 dir2 # copiar recursivo
+$ history         # historial de comandos
+$ which python3   # ruta de un ejecutable
+$ clear           # limpiar pantalla
+\end{minted}
+\begin{infobox}
+Atajos: \texttt{Ctrl+C} (cancelar), \texttt{Ctrl+A/E} (inicio/fin),
+\texttt{Ctrl+R} (buscar historial), \texttt{Tab} (autocompletar).
+\end{infobox}
+\end{frame}
+
+%---------------- redirecciones & pipes avanzado -------------%
+\begin{frame}[fragile]{Redirecciones y pipes (útilísimo)}
+\begin{minted}{bash}
+$ comando > out.txt            # stdout a archivo (sobrescribe)
+$ comando >> out.txt           # agrega al final
+$ comando 2> err.txt           # stderr a archivo
+$ comando 2>&1 | tee log.txt   # mezcla y copia a pantalla+archivo
+$ dmesg | grep -i usb | less   # filtrar y paginar
+$ du -sh * | sort -h           # uso de espacio ordenado
+\end{minted}
+\end{frame}
+
+%---------------- globbing, find, grep -----------------------%
+\begin{frame}[fragile]{Búsquedas: globbing, \texttt{find} y \texttt{grep}}
+\begin{minted}{bash}
+$ ls *.txt                       # comodines
+$ find . -name "*.py"            # buscar por nombre
+$ find /var/log -type f -mtime -1   # logs de hoy
+$ grep -R "ERROR" /var/log/      # buscar texto recursivo
+$ grep -n "main(" *.c            # con número de línea
+\end{minted}
+\begin{warnbox}
+Cuidado con \texttt{find / -name ...} sin permisos: puede tardar mucho.
+\end{warnbox}
+\end{frame}
+
+%---------------- permisos (ampliado) ------------------------%
+\begin{frame}[fragile]{Permisos (ampliado)}
 \begin{minted}{bash}
 $ ls -l backup.sh
 -rwxr-xr-- 1 pi pi  54 jul  8 12:30 backup.sh
+
+$ chmod u+x script.sh     # ejecutar para dueño
+$ chmod g+w datos/        # escritura para grupo
+$ chgrp alumnos datos/    # cambiar grupo
+$ umask                   # máscara por defecto
 \end{minted}
-
-\begin{itemize}
-  \item \texttt{rwx}: propietario
-  \item \texttt{r-x}: grupo
-  \item \texttt{r--}: otros
-\end{itemize}
-
 \begin{warnbox}
-  ¡Nunca des permisos 777 salvo que sepas lo que haces!
+Evita \texttt{chmod 777}. Permisos mínimos necesarios.
 \end{warnbox}
+\end{frame}
 
+%---------------- usuarios y sudo ----------------------------%
+\begin{frame}[fragile]{Usuarios, grupos y \texttt{sudo}}
 \begin{minted}{bash}
-$ chmod u+x backup.sh        # añadir ejec.
-$ sudo chown root:root file  # nuevo dueño
+$ whoami
+$ id                      # UID/GID y grupos
+$ groups pi
+$ sudo -v                 # validar sudo
+$ sudo adduser alumno
+$ sudo usermod -aG sudo alumno
+\end{minted}
+\begin{infobox}
+Trabaja con usuario normal; usa \texttt{sudo} sólo cuando haga falta.
+\end{infobox}
+\end{frame}
+
+%---------------- variables y entorno ------------------------%
+\begin{frame}[fragile]{Variables de entorno y alias}
+\begin{minted}{bash}
+$ echo $HOME  $USER  $SHELL
+$ echo $PATH
+$ export EDITOR=nano
+
+# alias útiles (añádelos a ~/.bashrc)
+alias ll='ls -lah'
+alias gs='git status'
+
+$ source ~/.bashrc   # recargar configuración
 \end{minted}
 \end{frame}
 
-%---------------- variables & echo -----------------%
-\begin{frame}[fragile]{Variables y \texttt{echo}}
+%---------------- editores ----------------------------%
+\begin{frame}[fragile]{Editores rápidos: \texttt{nano}, \texttt{micro}, \texttt{vim}}
 \begin{minted}{bash}
-$ NODENAME=$(hostname)
-$ echo "Hola, estoy en $NODENAME"
+$ sudo apt update
+$ sudo apt install -y nano micro vim
+$ nano notas.txt     # controles en pantalla
+$ micro notas.txt    # similar a editor moderno
+$ vim notas.txt      # potente (requiere práctica)
 \end{minted}
+\begin{infobox}
+Para empezar, \texttt{nano} o \texttt{micro} son ideales.
+\end{infobox}
+\end{frame}
 
+%---------------- gestión de paquetes ------------------------%
+\begin{frame}[fragile]{Gestión de paquetes con \texttt{apt}}
 \begin{minted}{bash}
-$ ls -l /etc > listado.txt   # redirige salida
-$ cat listado.txt | less     # pipe
+$ sudo apt update
+$ sudo apt upgrade -y
+$ sudo apt install -y htop tree git curl wget zip unzip
+$ sudo apt install -y build-essential cmake pkg-config
+$ sudo apt install -y python3-pip python3-venv
+$ sudo apt autoremove -y
+\end{minted}
+\begin{infobox}
+\texttt{build-essential} instala compiladores y herramientas clave.
+\end{infobox}
+\end{frame}
+
+%---------------- monitoreo del sistema ----------------------%
+\begin{frame}[fragile]{Monitoreo de sistema}
+\begin{minted}{bash}
+$ htop                     # procesos interactivo
+$ free -h                  # memoria
+$ df -h                    # uso de disco
+$ lsblk                    # dispositivos de bloque
+$ vcgencmd measure_temp    # temperatura (Raspberry)
+$ watch -n 1 "vcgencmd measure_temp"
 \end{minted}
 \end{frame}
+
+%---------------- redes básico -------------------------------%
+\begin{frame}[fragile]{Red básica}
+\begin{minted}{bash}
+$ hostname            # nombre de equipo
+$ hostname -I         # IPs
+$ ip a                # interfaces
+$ ping -c 4 8.8.8.8   # conectividad
+$ ping -c 4 google.com
+$ sudo apt install -y net-tools
+$ ifconfig            # (alternativa, en net-tools)
+\end{minted}
+\begin{infobox}
+Nombrar tu equipo ayuda: \texttt{sudo hostnamectl set-hostname pi-01}
+\end{infobox}
+\end{frame}
+
+%---------------- transferencia de archivos ------------------%
+\begin{frame}[fragile]{Transferencia de archivos (día 2 con SSH)}
+\begin{minted}{bash}
+# scp: copia simple
+$ scp archivo.txt pi@pi-01:~/    # a la Pi
+$ scp pi@pi-01:~/datos.csv .     # desde la Pi
+
+# rsync: sincronización eficiente
+$ rsync -avh carpeta/ pi@pi-01:~/carpeta/
+\end{minted}
+\begin{infobox}
+Usaremos esto cuando activemos SSH mañana.
+\end{infobox}
+\end{frame}
+
+%---------------- tmux/screen --------------------------------%
+\begin{frame}[fragile]{Sesiones persistentes: \texttt{tmux}}
+\begin{minted}{bash}
+$ sudo apt install -y tmux
+$ tmux new -s trabajo     # crear sesión
+# dentro: Ctrl+B, luego D  -> detach
+$ tmux ls                  # listar sesiones
+$ tmux attach -t trabajo   # volver a entrar
+\end{minted}
+\begin{infobox}
+Ideal para dejar procesos corriendo sin perderlos al cerrar la terminal.
+\end{infobox}
+\end{frame}
+
+%---------------- Python + Jupyter ---------------------------%
+\begin{frame}[fragile]{Python y Jupyter (opcional)}
+\begin{minted}{bash}
+$ python3 --version
+$ python3 -m venv ~/venvs/base
+$ source ~/venvs/base/bin/activate
+(base) $ pip install --upgrade pip
+(base) $ pip install jupyterlab numpy matplotlib
+(base) $ jupyter lab --no-browser --ip=0.0.0.0
+\end{minted}
+\begin{infobox}
+Con SSH haremos \textit{port forwarding} para abrir Jupyter desde tu laptop.
+\end{infobox}
+\end{frame}
+
+%---------------- Git básico ---------------------------------%
+\begin{frame}[fragile]{Git básico}
+\begin{minted}{bash}
+$ git config --global user.name "Tu Nombre"
+$ git config --global user.email "tu@correo"
+$ mkdir demo && cd demo
+$ git init
+$ echo "hola" > README.md
+$ git add README.md
+$ git commit -m "Primer commit"
+\end{minted}
+\end{frame}
+
+%---------------- raspi-config -------------------------------%
+\begin{frame}[fragile]{\texttt{raspi-config}: ajustes rápidos}
+\begin{minted}{bash}
+$ sudo raspi-config
+# Cambiar localización, zona horaria, expandir filesystem,
+# habilitar interfaces (I2C, SPI, cámara), etc.
+\end{minted}
+\begin{warnbox}
+Aplica cambios con cuidado; anota lo que modificas.
+\end{warnbox}
+\end{frame}
+
+%---------------- utilidades recomendadas --------------------%
+\begin{frame}[fragile]{Utilidades recomendadas en Raspberry Pi}
+\begin{minted}{bash}
+$ sudo apt install -y neofetch ranger ncdu nmap \
+  screenfetch mc jq ripgrep btop
+$ neofetch       # resumen del sistema
+$ ncdu           # uso de disco interactivo
+$ ranger         # explorador en terminal
+\end{minted}
+\begin{infobox}
+\texttt{ncdu} y \texttt{ranger} ayudan a manejar archivos y espacio.
+\end{infobox}
+\end{frame}
+
+%---------------- seguridad básica ---------------------------%
+\begin{frame}[fragile]{Seguridad básica (hoy, local)}
+\begin{minted}{bash}
+$ passwd                              # cambia tu contraseña
+$ sudo apt update && sudo apt upgrade -y
+$ sudo apt install -y unattended-upgrades
+$ sudo dpkg-reconfigure unattended-upgrades
+\end{minted}
+\begin{infobox}
+Mantén tu sistema actualizado y evita usar \texttt{sudo} sin necesidad.
+\end{infobox}
+\end{frame}
+
+%---------------- SSH (día 2) --------------------------------%
+\begin{frame}[fragile]{SSH: activar servicio (día 2)}
+\begin{minted}{bash}
+$ sudo systemctl enable --now ssh
+$ systemctl status ssh
+$ sudo ss -ltnp | grep ':22'   # puerto en escucha
+\end{minted}
+\begin{warnbox}
+Activa SSH sólo cuando controles la red del aula.
+\end{warnbox}
+\end{frame}
+
+%---------------- SSH (claves) -------------------------------%
+\begin{frame}[fragile]{SSH: claves y acceso sin contraseña}
+\begin{minted}{bash}
+# En tu laptop
+$ ssh-keygen -t ed25519 -C "tu@correo"
+$ ssh-copy-id pi@pi-01        # o pi@IP.DE.TU.PI
+$ ssh pi@pi-01
+\end{minted}
+\begin{minted}{bash}
+# Config opcional (~/.ssh/config en tu laptop)
+Host pi-01
+  HostName 192.168.1.50
+  User pi
+  IdentityFile ~/.ssh/id_ed25519
+\end{minted}
+\end{frame}
+
+%---------------- SSH (túneles y scp/rsync) ------------------%
+\begin{frame}[fragile]{SSH: túneles y transferencia}
+\begin{minted}{bash}
+# Port forwarding (Jupyter en la Pi -> tu laptop)
+$ ssh -L 8888:localhost:8888 pi@pi-01
+
+# Copia de archivos
+$ scp archivo.txt pi@pi-01:~/     # subir
+$ scp pi@pi-01:~/datos.csv .      # bajar
+
+# Sincronización eficiente
+$ rsync -avh carpeta/ pi@pi-01:~/carpeta/
+\end{minted}
+\end{frame}
+
+%---------------- diagnóstico SSH ----------------------------%
+\begin{frame}[fragile]{SSH: diagnóstico rápido}
+\begin{minted}{bash}
+$ ping -c 2 pi-01
+$ ssh -vvv pi@pi-01          # modo verboso
+$ sudo journalctl -u ssh -e  # logs en la Pi
+$ sudo ufw status            # firewall (si está activo)
+\end{minted}
+\begin{infobox}
+Si falla por nombre, intenta por IP directa.
+\end{infobox}
+\end{frame}
+
 
 %---------------- actividad ------------------------%
-\begin{frame}{Actividad práctica (30 min)}
+\begin{frame}{Actividad práctica (30 min)}
 \begin{enumerate}
   \item Crear \texttt{~/proyectos/\{scripts,datos,logs\}}
   \item Escribir \texttt{backup.sh} que:
@@ -99,11 +371,11 @@ $ cat listado.txt | less     # pipe
   \item Añadir bit de ejecución y probar.
 \end{enumerate}
 
-\small\faLightbulb\; Tip: usa \texttt{\$(date +\%F)} para sellar fecha.
+\small\faLightbulb\; Tip: usa \texttt{\$(date +\%F)} para sellar fecha.
 \end{frame}
 
 %---------------- cheatsheet -----------------------%
-\begin{frame}[fragile]{Mini cheatsheet}
+\begin{frame}[fragile]{Mini cheatsheet}
 \begin{columns}[T,onlytextwidth]
 \column{0.50\linewidth}
 \begin{itemize}
@@ -118,7 +390,7 @@ $ cat listado.txt | less     # pipe
   \item \textbf{Editar}: \mintinline{bash}{nano}, \mintinline{bash}{vim}
   \item \textbf{Actualizar}: \mintinline{bash}{sudo apt update && apt upgrade}
   \item \textbf{Historial}: \mintinline{bash}{history}, \mintinline{bash}{!42}
-  \item \textbf{Autocompletar}: ↹ (TAB)
+  \item \textbf{Autocompletar}: ↹ (TAB)
 \end{itemize}
 \end{columns}
 \end{frame}
@@ -126,16 +398,16 @@ $ cat listado.txt | less     # pipe
 %---------------- recursos -------------------------%
 \begin{frame}{Recursos recomendados}
 \begin{itemize}
-  \item \emph{The Linux Command Line}, W. Shotts Jr. (ebook gratuito)
-  \item \url{https://linuxjourney.com} — interactivo
-  \item Documentación oficial de Raspberry Pi OS
+  \item \emph{The Linux Command Line}, W. Shotts Jr. (ebook gratuito)
+  \item \url{https://linuxjourney.com} -- interactivo
+  \item Documentación oficial de Raspberry Pi OS
 \end{itemize}
 \end{frame}
 
 %---------------- cierre ---------------------------%
 \begin{frame}[plain]
-  \centering \Huge ¡Buen trabajo!\\[1ex]
-  Siguiente bloque: redes IP y claves SSH
+  \centering \Huge ¡Buen trabajo!\\[1ex]
+  Siguiente bloque: redes IP y claves SSH
 \end{frame}
 
 \end{document}
