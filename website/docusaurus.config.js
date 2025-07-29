@@ -2,11 +2,11 @@
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Cl\u00FAsterLab Raspberry Pi 5',
-  url: 'https://example.com',
+  url: 'https://github.com/jperaltac/erpi5',
   baseUrl: '/',
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
-  organizationName: 'example',
+  organizationName: 'jperaltac',
   projectName: 'erpi5',
   presets: [
     [
