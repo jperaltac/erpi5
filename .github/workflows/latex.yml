@@ -10,10 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Install TeX Live
+      - name: Install TeX Live and fonts
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-luatex texlive-latex-extra texlive-fonts-recommended
+          sudo apt-get install -y --no-install-recommends \
+            texlive-luatex texlive-latex-extra texlive-fonts-recommended \
+            texlive-lang-spanish texlive-fonts-extra \
+            fonts-inter fonts-firacode fonts-noto-color-emoji
+          sudo fc-cache -f
       - name: Build PDFs
         run: make
       - name: Upload PDFs
