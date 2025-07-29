@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+#
+# This file is part of the erpi5 project and is licensed under the
+# GNU General Public License v3.  See the LICENSE file for details.
+#
 # gflops_pi5.py  –  calcula GFLOPS sencillos en una Raspberry Pi 5
 import time, numpy as np
 
