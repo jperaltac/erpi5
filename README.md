@@ -1,6 +1,6 @@
 # Cl\xC3\xBAsterLab Raspberry Pi 5 Slides
 
-This repository contains the Beamer slides used for the "Cl\xC3\xBAsterLab" workshop focusing on Raspberry Pi 5. The material is organized per day (`D01` to `D10`) and written in Spanish. Each directory includes the corresponding `.tex` sources and precompiled PDFs.
+This repository contains the Beamer slides used for the "Cl\xC3\xBAsterLab" workshop focusing on Raspberry Pi 5. The material is organized per day (`D01` to `D06`) and written in Spanish. Each directory includes the corresponding `.tex` sources and precompiled PDFs.
 
 ## Building
 

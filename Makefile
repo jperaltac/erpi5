@@ -1,4 +1,4 @@
-SUBDIRS := $(shell seq -f "D%02g" 1 10)
+SUBDIRS := $(shell seq -f "D%02g" 1 6)
 
 all:
 	@for dir in $(SUBDIRS); do \
