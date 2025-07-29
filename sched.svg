@@ -125,8 +125,9 @@
      x="150"
      y="70"
      class="bubble"
-     id="text7"><tspan
-       style="font-weight:bold"
+     id="text7"
+     style="font-size:18.6667px"><tspan
+       style="font-weight:bold;font-size:18.6667px"
        id="tspan37">W1 Lunes</tspan></text>
   <text
      x="115.17857"
@@ -139,13 +140,13 @@
      class="label"
      id="text9">Linux básico</text>
   <text
-     x="123.46939"
-     y="163.94133"
+     x="110.20409"
+     y="150.67603"
      class="label"
      id="text10"
-     style="fill:#782121"><tspan
-       style="font-weight:bold"
-       id="tspan45">Individual</tspan></text>
+     style="font-size:13.3333px;fill:#782121"><tspan
+       style="font-weight:bold;font-size:13.3333px"
+       id="tspan45">INDIVIDUAL</tspan></text>
   <circle
      cx="550"
      cy="100"
@@ -157,8 +158,9 @@
      x="550"
      y="70"
      class="bubble"
-     id="text11"><tspan
-       style="font-weight:bold"
+     id="text11"
+     style="font-size:18.6667px"><tspan
+       style="font-weight:bold;font-size:18.6667px"
        id="tspan38">W1 Miér.</tspan></text>
   <text
      x="515.17859"
@@ -166,12 +168,12 @@
      class="label"
      id="text12">Redes &amp; Bash</text>
   <text
-     x="528.44385"
-     y="161.37756"
+     x="525.9566"
+     y="153.08675"
      class="label"
      id="text13"
-     style="fill:#800000"><tspan
-       style="font-weight:bold"
+     style="font-size:13.3333px;fill:#800000"><tspan
+       style="font-weight:bold;font-size:13.3333px"
        id="tspan46">GRUPAL</tspan></text>
   <circle
      cx="950"
@@ -184,8 +186,9 @@
      x="950"
      y="70"
      class="bubble"
-     id="text14"><tspan
-       style="font-weight:bold"
+     id="text14"
+     style="font-size:18.6667px"><tspan
+       style="font-weight:bold;font-size:18.6667px"
        id="tspan39">W1 Vier.</tspan></text>
   <text
      x="924.29846"
@@ -204,8 +207,9 @@
      x="150"
      y="270"
      class="bubble"
-     id="text17"><tspan
-       style="font-weight:bold"
+     id="text17"
+     style="font-size:18.6667px"><tspan
+       style="font-weight:bold;font-size:18.6667px"
        id="tspan40">W2 Lunes</tspan></text>
   <text
      x="125.12755"
@@ -228,8 +232,9 @@
      x="550"
      y="270"
      class="bubble"
-     id="text21"><tspan
-       style="font-weight:bold"
+     id="text21"
+     style="font-size:18.6667px"><tspan
+       style="font-weight:bold;font-size:18.6667px"
        id="tspan41">W2 Miér.</tspan></text>
   <text
      x="514.34949"
@@ -253,8 +258,9 @@
      x="950"
      y="270"
      class="bubble"
-     id="text25"><tspan
-       style="font-weight:bold"
+     id="text25"
+     style="font-size:18.6667px"><tspan
+       style="font-weight:bold;font-size:18.6667px"
        id="tspan42">W2 Vier.</tspan></text>
   <text
      x="914.34949"
@@ -279,8 +285,9 @@
      x="550"
      y="470"
      class="bubble"
-     id="text29"><tspan
-       style="font-weight:bold"
+     id="text29"
+     style="font-size:18.6667px"><tspan
+       style="font-weight:bold;font-size:18.6667px"
        id="tspan43">W3 Miér.</tspan></text>
   <text
      x="521.81122"
@@ -299,8 +306,9 @@
      x="950"
      y="470"
      class="bubble"
-     id="text32"><tspan
-       style="font-weight:bold"
+     id="text32"
+     style="font-size:18.6667px"><tspan
+       style="font-weight:bold;font-size:18.6667px"
        id="tspan44">W3 Vier.</tspan></text>
   <text
      x="911.86224"
@@ -320,7 +328,9 @@
      x="70"
      y="592"
      class="label"
-     id="text35">Raspberry Pi work</text>
+     id="text35"><tspan
+       style="font-weight:bold"
+       id="tspan49">Raspberry Pi work</tspan></text>
   <rect
      x="250"
      y="580"
@@ -333,7 +343,9 @@
      x="270"
      y="592"
      class="label"
-     id="text36">Cluster externo</text>
+     id="text36"><tspan
+       style="font-weight:bold"
+       id="tspan48">Cluster externo</tspan></text>
   <rect
      x="450"
      y="580"
@@ -346,53 +358,55 @@
      x="470"
      y="592"
      class="label"
-     id="text37">Trabajo grupal</text>
+     id="text37"><tspan
+       style="font-weight:bold"
+       id="tspan47">RaspberryPi + Cluster externo</tspan></text>
   <text
      x="524.84924"
-     y="562.22931"
+     y="555.59668"
      class="label"
      id="text13-1"
-     style="font-size:11px;fill:#800000"><tspan
-       style="font-weight:bold"
+     style="font-size:13.3333px;fill:#800000"><tspan
+       style="font-weight:bold;font-size:13.3333px"
        id="tspan46-5">GRUPAL</tspan></text>
   <text
-     x="926.91302"
-     y="561.84412"
+     x="924.42578"
+     y="555.21149"
      class="label"
      id="text13-4"
-     style="font-size:11px;fill:#800000"><tspan
-       style="font-weight:bold"
+     style="font-size:13.3333px;fill:#800000"><tspan
+       style="font-weight:bold;font-size:13.3333px"
        id="tspan46-7">GRUPAL</tspan></text>
   <text
-     x="129.2421"
-     y="361.62979"
+     x="125.92577"
+     y="356.6553"
      class="label"
      id="text13-5"
-     style="font-size:11px;fill:#800000"><tspan
-       style="font-weight:bold"
+     style="font-size:13.3333px;fill:#800000"><tspan
+       style="font-weight:bold;font-size:13.3333px"
        id="tspan46-69">GRUPAL</tspan></text>
   <text
-     x="930.16559"
-     y="158.964"
+     x="926.0202"
+     y="153.98952"
      class="label"
      id="text13-7"
-     style="font-size:11px;fill:#800000"><tspan
-       style="font-weight:bold"
+     style="font-size:13.3333px;fill:#800000"><tspan
+       style="font-weight:bold;font-size:13.3333px"
        id="tspan46-4">GRUPAL</tspan></text>
   <text
-     x="522.52814"
-     y="357.70181"
+     x="510.09192"
+     y="351.06915"
      class="label"
      id="text10-2"
-     style="font-size:11px;fill:#782121"><tspan
-       style="font-weight:bold"
-       id="tspan45-5">Individual</tspan></text>
+     style="font-size:13.3333px;fill:#782121"><tspan
+       style="font-weight:bold;font-size:13.3333px"
+       id="tspan45-5">INDIVIDUAL</tspan></text>
   <text
-     x="924.28064"
-     y="359.35999"
+     x="911.01532"
+     y="352.72733"
      class="label"
      id="text10-2-7"
-     style="font-size:11px;fill:#782121"><tspan
-       style="font-weight:bold"
-       id="tspan45-5-4">Individual</tspan></text>
+     style="font-size:13.3333px;fill:#782121"><tspan
+       style="font-weight:bold;font-size:13.3333px"
+       id="tspan45-5-4">INDIVIDUAL</tspan></text>
 </svg>
