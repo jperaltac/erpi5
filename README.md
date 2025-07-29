@@ -12,6 +12,11 @@ make clean # removes PDFs and temporary files
 ```
 
 Ensure `lualatex` and the required fonts (Inter, Fira Code, Libertinus) are installed on your system. The slides rely on `minted`, so Python and `pygments` are also needed.
+Install the Python dependencies with:
+
+```bash
+pip install -r requirements.txt
+```
 
 ## License
 
