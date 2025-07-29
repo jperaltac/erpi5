@@ -12,6 +12,20 @@ make clean # removes PDFs and temporary files
 ```
 
 Ensure `lualatex` and the required fonts (Inter, Fira Code, Libertinus) are installed on your system. The slides rely on `minted`, so Python and `pygments` are also needed.
+
+Typical packages for installing the Inter and Fira Code fonts are available on most Linux distributions:
+
+```bash
+# Debian/Ubuntu
+sudo apt install fonts-inter fonts-firacode
+
+# Fedora
+sudo dnf install inter-fonts fira-code-fonts
+
+# Arch Linux
+sudo pacman -S ttf-inter ttf-fira-code
+```
+
 Install the Python dependencies with:
 
 ```bash
