@@ -1,6 +1,7 @@
 % !TEX program = lualatex
 \documentclass[aspectratio=169,professionalfonts]{beamer}
 \input{../preamble.tex}
+\usepackage{mwe}
 
 \title[ClústerLab • Día 3]{Diagnóstico en tiempo real y reto grupal}
 \subtitle{Monitoreo, registros y uso de \texttt{sshfs}}
@@ -12,6 +13,34 @@
 %------------------------------ portada ----------------------------
 \begin{frame}[plain]
   \titlepage
+\end{frame}
+
+%------------------------------ sshfs persistente ------------------
+\begin{frame}[fragile]{Montaje permanente con \texttt{sshfs}}
+  \begin{minted}{bash}
+$ echo 'pi@head:/home/shared /home/cluster/shared fuse.sshfs defaults,_netdev 0 0' | sudo tee -a /etc/fstab
+  \end{minted}
+  Requiere claves SSH configuradas y el paquete \texttt{sshfs} instalado en el arranque.
+\end{frame}
+
+%------------------------------ log example -----------------------
+\begin{frame}[fragile]{Ejemplo de registro}
+  \begin{center}
+    \includegraphics[width=.7\textwidth]{example-image}
+  \end{center}
+  Salida típica al ejecutar \texttt{tail -f /var/log/health.log}.
+\end{frame}
+
+%------------------------------ logs -------------------------------
+\begin{frame}[fragile]{Revisión de logs con \texttt{journalctl}}
+  \begin{minted}{bash}
+$ sudo journalctl -u ssh
+$ sudo journalctl -f
+  \end{minted}
+  \begin{itemize}
+    \item Usa \texttt{-u} o \texttt{-b} para filtrar servicios o arranques.
+    \item Con \texttt{-f} observas mensajes en tiempo real.
+  \end{itemize}
 \end{frame}
 
 %------------------------------ objetivos --------------------------
@@ -97,6 +126,7 @@ $ sudo systemctl enable --now avahi-daemon
   \begin{enumerate}
     \item Ejecuta las herramientas de monitoreo y comparte capturas de tu Pi bajo carga.
     \item Lanza \texttt{healthcheck.sh} y revisa el log después de unos minutos.
+    \item Consulta los últimos eventos con \texttt{journalctl -u ssh}.
     \item Monta el directorio compartido con \texttt{sshfs} y crea un archivo de prueba.
     \item Conéctate a otro nodo usando su nombre (\texttt{ssh pi@node02.local}) y verifica la presencia del archivo.
   \end{enumerate}
