@@ -1,8 +1,0 @@
-\babel@toc {spanish}{}\relax 
-\beamer@sectionintoc {1}{IA, ML y Deep Learning}{3}{0}{1}
-\beamer@sectionintoc {2}{Panorama general}{12}{0}{2}
-\beamer@sectionintoc {3}{Redes Neuronales}{15}{0}{3}
-\beamer@sectionintoc {4}{CNN en detalle}{31}{0}{4}
-\beamer@sectionintoc {5}{Regularización y Mejora de modelos}{33}{0}{5}
-\beamer@sectionintoc {6}{Ejemplos en Keras}{34}{0}{6}
-\beamer@sectionintoc {7}{Conclusiones}{36}{0}{7}
