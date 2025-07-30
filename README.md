@@ -39,7 +39,7 @@ This project is distributed under the terms of the GNU General Public License v3
 ## Website
 
 A minimal [Docusaurus](https://docusaurus.io) site is provided under `website/`.
-Run `npm install` inside that folder and `npm run build` to generate the static
+It requires **Node.js 20** or later. Run `npm install` inside that folder and `npm run build` to generate the static
 site. The resulting files appear in `website/build` and are published to
 GitHub Pages by the CI workflow. The website is
 available at [https://jperaltac.github.io/erpi5/](https://jperaltac.github.io/erpi5/).
