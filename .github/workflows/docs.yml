@@ -1,0 +1,38 @@
+name: Build Docs
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'website/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies and build
+        run: |
+          cd website
+          npm ci
+          npm run build
+      - name: Upload Pages artifact
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: actions/upload-pages-artifact@v3.0.1
+        with:
+          path: ./website/build
+          name: github-pages-${{ github.run_number }}
+      - name: Deploy to GitHub Pages
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: actions/deploy-pages@v4.0.5
+        with:
+          artifact_name: github-pages-${{ github.run_number }}

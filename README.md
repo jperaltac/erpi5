@@ -1,4 +1,4 @@
-# Cl\xC3\xBAsterLab Raspberry Pi 5 Slides
+# ClusterLab Raspberry Pi 5 Slides
 
 This repository contains the Beamer slides used for the "Cl\xC3\xBAsterLab" workshop focusing on Raspberry Pi 5. The material is organized per day (`D01` to `D06`) and written in Spanish. Each directory includes the corresponding `.tex` sources and precompiled PDFs.
 
@@ -39,5 +39,7 @@ This project is distributed under the terms of the GNU General Public License v3
 ## Website
 
 A minimal [Docusaurus](https://docusaurus.io) site is provided under `website/`.
-Run `npm install` inside that folder and `npm run build` to generate the static
-site that can be published on GitHub Pages.
+It requires **Node.js 20** or later. Run `npm install` inside that folder and `npm run build` to generate the static
+site. The resulting files appear in `website/build` and are published to
+GitHub Pages by the CI workflow. The website is
+available at [https://jperaltac.github.io/erpi5/](https://jperaltac.github.io/erpi5/).
