@@ -1,7 +1,7 @@
 // @ts-check
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Escuela Cl\u00FAsterLab',
+  title: 'Escuela ClusterLab',
   tagline: 'Material del taller Raspberry Pi 5',
   url: 'https://jperaltac.github.io',
   baseUrl: '/erpi5/',

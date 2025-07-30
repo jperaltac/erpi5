@@ -5,11 +5,11 @@ slug: /compilar
 
 Los archivos PDF se generan a partir de las fuentes \`LaTeX\`. Para
 obtenerlos necesitas \`lualatex\` y las fuentes Inter, Fira Code y
-Libertinus. Tambi\u00E9n se usa el paquete \`minted\`, as\u00ED que Python y
+Libertinus. Tambien se usa el paquete \`minted\`, asi que Python y
 \`pygments\` deben estar instalados.
 
 ```bash
-make       # compila todos los d\u00EDas
+make       # compila todos los dias
 make clean # elimina temporales
 ```
 
