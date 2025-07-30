@@ -39,9 +39,9 @@ jobs:
           git push
       - name: Upload Pages artifact
         if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v3.0.1
         with:
           path: ./docs
       - name: Deploy to GitHub Pages
         if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v4.0.5
