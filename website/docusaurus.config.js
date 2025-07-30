@@ -1,9 +1,10 @@
 // @ts-check
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Cl\u00FAsterLab Raspberry Pi 5',
-  url: 'https://github.com/jperaltac/erpi5',
-  baseUrl: '/',
+  title: 'Escuela Cl\u00FAsterLab',
+  tagline: 'Material del taller Raspberry Pi 5',
+  url: 'https://jperaltac.github.io',
+  baseUrl: '/erpi5/',
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
   organizationName: 'jperaltac',
