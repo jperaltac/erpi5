@@ -3,14 +3,13 @@ slug: /
 title: Escuela Cl\u00FAsterLab
 ---
 
-Bienvenido a la Escuela **Cl\u00FAsterLab**, un espacio de formaci\u00F3n en
-computaci\u00F3n de alto rendimiento. En esta edici\u00F3n nos centraremos en
-la creaci\u00F3n y uso de un cl\u00FAster basado en Raspberry Pi 5.
+Bienvenido a la Escuela **Cl\u00FAsterLab**, un espacio de formaci\u00F3n en computaci\u00F3n de alto rendimiento. Durante seis d\u00EDas exploraremos la instalaci\u00F3n y administraci\u00F3n de un cl\u00FAster de Raspberry Pi 5.
+
+Cada directorio `DXX` de este repositorio contiene las fuentes de las diapositivas y el c\u00F3digo de apoyo usado en el taller.
 
 ## Material del taller
 
-Pr\u00F3ximamente podr\u00E1s descargar las diapositivas en PDF. Por ahora se
-listan los nombres de los archivos correspondientes a cada d\u00EDa.
+Los PDF se generan a partir de los archivos LaTeX. Consulta la secci\u00F3n [Compilar las presentaciones](./compilar) para aprender c\u00F3mo obtenerlos. A continuaci\u00F3n se listan los nombres de los documentos por d\u00EDa:
 
 | D\u00EDa | Presentaciones |
 | --- | --- |
@@ -21,3 +20,5 @@ listan los nombres de los archivos correspondientes a cada d\u00EDa.
 | D05 | D05P01.pdf, D05P02.pdf |
 | D06 | D06P01.pdf, D06P02.pdf |
 | General ML | MLGeneral-P01.pdf |
+
+Puedes encontrar el c\u00F3digo fuente completo en [GitHub](https://github.com/jperaltac/erpi5).
