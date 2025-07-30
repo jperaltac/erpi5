@@ -1,6 +1,7 @@
 % !TEX program = lualatex
 \documentclass[aspectratio=169,professionalfonts]{beamer}
 \input{../preamble.tex}
+\usepackage{mwe}
 
 \title[ClústerLab • Día 3]{Gestión del sistema y diagnóstico}
 \subtitle{Hostnames, usuarios y sincronización de reloj}
@@ -12,6 +13,38 @@
 %------------------------------ portada ----------------------------
 \begin{frame}[plain]
   \titlepage
+\end{frame}
+
+%------------------------------ comprobar hora --------------------
+\begin{frame}[fragile]{Verificar fecha y hora}
+  \begin{minted}{bash}
+$ date
+  \end{minted}
+  Asegúrate de que la zona horaria mostrada sea la configurada. En caso contrario repite los pasos de \texttt{timedatectl}.
+\end{frame}
+
+%------------------------------ bashrc -----------------------------
+\begin{frame}[fragile]{Personalizar \texttt{.bashrc}}
+  \begin{minted}{bash}
+$ sudo -u cluster nano /home/cluster/.bashrc
+alias ll='ls -lh --color'
+  \end{minted}
+  Pide al usuario cerrar sesión y volver a entrar para aplicar los alias.
+  \begin{center}
+    \includegraphics[width=.4\textwidth]{example-image-c}
+  \end{center}
+\end{frame}
+
+%------------------------------ hostname test ----------------------
+\begin{frame}[fragile]{Comprobar el nuevo hostname}
+  \begin{minted}{bash}
+$ hostname
+$ ping -c1 node01
+  \end{minted}
+  \begin{itemize}
+    \item El comando \texttt{hostname} debe mostrar el nombre elegido.
+    \item Si \texttt{/etc/hosts} está correcto, el ping se resolverá localmente.
+  \end{itemize}
 \end{frame}
 
 %------------------------------ objetivos --------------------------
@@ -76,6 +109,9 @@ $ timedatectl status
   \begin{infobox}
   Un reloj sincronizado evita errores en Slurm y certificados SSL. Verifica que la salida muestre \texttt{System clock synchronized: yes}.
   \end{infobox}
+  \begin{center}
+    \includegraphics[width=.5\textwidth]{example-image}
+  \end{center}
 \end{frame}
 
 %------------------------------ revisión ---------------------------

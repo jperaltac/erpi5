@@ -1,6 +1,7 @@
 % !TEX program = lualatex
 \documentclass[aspectratio=169,professionalfonts]{beamer}
 \input{../preamble.tex}
+\usepackage{mwe}
 
 \title[ClústerLab • Día 2]{Bash avanzado y transferencia}
 \subtitle{Condicionales, bucles y copias seguras}
@@ -12,6 +13,59 @@
 %------------------------------ portada ----------------------------
 \begin{frame}[plain]
   \titlepage
+\end{frame}
+
+%------------------------------ rsync extra -----------------------
+\begin{frame}[fragile]{Rsync incremental}
+  \begin{minted}{bash}
+$ rsync -av --delete origen/ pi@10.0.0.21:~/destino/
+  \end{minted}
+  \begin{itemize}
+    \item \texttt{--delete} borra en destino lo que ya no existe en origen.
+    \item Ideal para copias de seguridad periódicas.
+  \end{itemize}
+\end{frame}
+
+%------------------------------ ping parallel ----------------------
+\begin{frame}[fragile]{Ping en paralelo}
+  \begin{minted}{bash}
+for host in {1..254}; do
+  ping -c1 -W1 "10.0.0.$host" &
+done
+wait
+  \end{minted}
+  Ejecutar varios \texttt{ping} simultáneos reduce el tiempo total pero genera más tráfico.
+\end{frame}
+
+%------------------------------ arrays -----------------------------
+\begin{frame}[fragile]{Bucles con arreglos}
+  \begin{minted}{bash}
+FRUTAS=(manzana pera mango)
+for fruta in "${FRUTAS[@]}"; do
+  echo "Me gusta la $fruta"
+done
+  \end{minted}
+  \begin{itemize}
+    \item Las comillas dobles preservan espacios si los hay.
+    \item Añade más elementos y ejecuta de nuevo el ciclo.
+  \end{itemize}
+  \begin{center}
+    \includegraphics[width=.4\textwidth]{example-image-b}
+  \end{center}
+\end{frame}
+
+%------------------------------ condicionales demo -----------------
+\begin{frame}[fragile]{Prueba rápida de condicionales}
+  \begin{minted}{bash}
+$ bash test_file.sh notas.txt
+  \end{minted}
+  Crea el script anterior y ejecuta distintos argumentos:
+  \begin{itemize}
+    \item Un archivo que exista.
+    \item Un directorio.
+    \item Un nombre inexistente.
+  \end{itemize}
+  Observa los mensajes que imprime.
 \end{frame}
 
 %------------------------------ objetivos --------------------------
@@ -132,6 +186,7 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  archivo.txt
 \begin{frame}[fragile]{Actividad práctica}
   \begin{enumerate}
     \item Implementa y ejecuta \texttt{ping\_all.sh} en tu subred.
+    \item Prueba la variante en paralelo y compara el tiempo de ejecución.
     \item Copia un archivo de al menos 10 MB a tu Pi usando \texttt{scp} y mide el tiempo.
     \item Repite la copia con \texttt{rsync} y compara tiempos.
     \item Verifica los hashes SHA‑256 para confirmar integridad.

@@ -1,6 +1,7 @@
 % !TEX program = lualatex
 \documentclass[aspectratio=169,professionalfonts]{beamer}
 \input{../preamble.tex}
+\usepackage{mwe} % figuras de ejemplo -> example-image
 
 \title[ClústerLab • Día 2]{Redes IP y claves SSH}
 \subtitle{Configurar IP estática y generar claves}
@@ -12,6 +13,51 @@
 %------------------------------ portada ----------------------------
 \begin{frame}[plain]
   \titlepage
+\end{frame}
+
+%------------------------------ ssh test ---------------------------
+\begin{frame}[fragile]{Probar acceso SSH}
+  \begin{minted}{bash}
+$ ssh pi@10.0.0.21 hostname
+  \end{minted}
+  Si la autenticación funciona, verás el nombre de tu Pi en la salida.
+  \begin{minted}{bash}
+# Opcional en ~/.ssh/config
+Host rpi21
+  HostName 10.0.0.21
+  User pi
+  \end{minted}
+  Entonces basta con ejecutar:
+  \begin{minted}{bash}
+$ ssh rpi21
+  \end{minted}
+\end{frame}
+
+%------------------------------ nmap opciones ----------------------
+\begin{frame}[fragile]{Opciones útiles de \texttt{nmap}}
+  \begin{minted}{bash}
+$ nmap -A 10.0.0.0/24       # detección de servicios y SO
+$ nmap --open -p 80 10.0.0.* # buscar servidores web
+  \end{minted}
+  \begin{itemize}
+    \item \texttt{-A} entrega información detallada y requiere más tiempo.
+    \item Limita el rango si la red está muy concurrida.
+  \end{itemize}
+\end{frame}
+
+%------------------------------ prueba ip -------------------------
+\begin{frame}[fragile]{Verificar conectividad}
+  \begin{minted}{bash}
+$ ip addr show eth0 | grep 'inet '
+$ ping -c3 10.0.0.1
+  \end{minted}
+  \begin{itemize}
+    \item Confirma que la IP asignada se muestre en \texttt{inet}.
+    \item Un par de \texttt{ping} verifica la ruta al gateway.
+  \end{itemize}
+  \begin{center}
+    \includegraphics[width=.45\textwidth]{example-image-a}
+  \end{center}
 \end{frame}
 
 %------------------------------ objetivos --------------------------
@@ -95,6 +141,7 @@ $ ssh-copy-id pi@10.0.0.21
     \item Asigna una IP estática a tu Pi y reinicia la interfaz.
     \item Escanea la red para registrar IP y hostname de tus compañeros.
     \item Genera tu par de claves y copia la pública a la Pi.
+    \item Conéctate vía SSH y ejecuta \texttt{uptime} para validar acceso.
     \item Comparte la lista de IP/hostnames en el canal del curso.
   \end{enumerate}
 \end{frame}
