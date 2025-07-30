@@ -1,110 +1,116 @@
 % !TEX program = lualatex
-\documentclass[aspectratio=169, professionalfonts]{beamer}
-\usepackage[spanish]{babel}
-\usepackage{fontspec}
-\usepackage{graphicx}
-\usepackage{mwe}
-\usepackage{xcolor}
-\usepackage{minted}
-\usepackage{emoji}
-\setminted{
-  fontsize=\small,
-  bgcolor=gray!10,
-  linenos=false
-}
-\setmainfont{Libertinus Serif}
+\documentclass[aspectratio=169,professionalfonts]{beamer}
+\input{../preamble.tex}
 
-\title[ClústerLab • Día 3]{Desafío grupal y diagnóstico}
-\subtitle{Hands-on en Raspberry Pi 5}
+\title[ClústerLab • Día 3]{Diagnóstico en tiempo real y reto grupal}
+\subtitle{Monitoreo, registros y uso de \texttt{sshfs}}
 \author{Equipo docente ClústerLab}
-\date{8 de agosto 2025}
+\date{8 de agosto de 2025}
 
 \begin{document}
 
-%-------------------------------------------------------------- title
+%------------------------------ portada ----------------------------
 \begin{frame}[plain]
   \titlepage
 \end{frame}
 
-%-------------------------------------------------------------- objetivo
-\begin{frame}{Objetivo del desafío}
-\begin{itemize}
-  \item Dejar su nodo \textbf{accesible por nombre} dentro de la LAN.  
-  \item Configurar login SSH sin contraseña.  
-  \item Crear un script de diagnóstico y compartirlo con otra Pi.  
-  \item Demostrar monitoreo en vivo (\texttt{watch}).  
-\end{itemize}
+%------------------------------ objetivos --------------------------
+\begin{frame}[fragile]{Objetivos de la sesión}
+  \begin{itemize}
+    \item Utilizar herramientas de monitoreo (\texttt{htop}, \texttt{df}, \texttt{iotop}, \texttt{watch}).
+    \item Crear un script de salud que registre el estado del sistema cada minuto.
+    \item Montar un directorio remoto mediante \texttt{sshfs}.
+    \item Acceder a nodos por nombre de host usando mDNS/Avahi.
+  \end{itemize}
 \end{frame}
 
-%-------------------------------------------------------------- checklist
-\begin{frame}{Checklist previo}
-\begin{enumerate}
-  \item Hostname cambiado en \texttt{/etc/hostname} y \texttt{/etc/hosts}.  
-  \item Clave SSH copiada: \mintinline{bash}|ssh-copy-id alumno@nodo02|  
-  \item \texttt{avahi-daemon} corriendo (\texttt{systemctl status avahi-daemon}).  
-\end{enumerate}
+%------------------------------ agenda -----------------------------
+\begin{frame}[fragile]{Agenda (10:45 – 13:00)}
+  \begin{enumerate}
+    \item Monitorizar CPU, memoria, disco y sensores en tiempo real.
+    \item Desarrollar y ejecutar \texttt{healthcheck.sh}.
+    \item Instalar \texttt{sshfs} y montar \texttt{/home/shared}.
+    \item Configurar resolución de nombres vía Avahi (mDNS).
+  \end{enumerate}
 \end{frame}
 
-%-------------------------------------------------------------- script diag
-\begin{frame}[fragile]{Plantilla de \texttt{diag.sh}}
-\begin{minted}{bash}
+%------------------------------ monitoreo --------------------------
+\begin{frame}[fragile]{Herramientas de diagnóstico}
+  \begin{minted}{bash}
+$ htop          # procesos y CPU en tiempo real
+$ df -h         # uso de disco legible
+$ iotop         # I/O por proceso (necesita root)
+$ watch -n1 sensors # temperatura y voltajes cada segundo
+  \end{minted}
+  \begin{infobox}
+  Ajusta el intervalo de \texttt{watch} según tus necesidades (\texttt{-n2} para cada 2 s, etc.). \texttt{iotop} requiere privilegios y puede instalarse vía \texttt{sudo apt install iotop}.
+  \end{infobox}
+\end{frame}
+
+%------------------------------ script salud -----------------------
+\begin{frame}[fragile]{Script \texttt{healthcheck.sh}}
+  \begin{minted}{bash}
 #!/usr/bin/env bash
-echo "Nodo: $(hostname)"
-echo "Fecha: $(date)"
-# Temperatura
-temp=$(vcgencmd measure_temp | cut -d"=" -f2)
-echo "Temp: $temp"
-# Uso CPU 1 segundo
-cpu=$(grep 'cpu ' /proc/stat)
-sleep 1
-cpu2=$(grep 'cpu ' /proc/stat)
-idle=$(( $(echo $cpu  | cut -d" " -f5) ))
-idle2=$(( $(echo $cpu2 | cut -d" " -f5) ))
-total=$(( $(echo $cpu  | cut -d" " -f2- | tr ' ' '+') ))
-total2=$(( $(echo $cpu2 | cut -d" " -f2- | tr ' ' '+') ))
-usage=$(( 100 * ( (total2-total) - (idle2-idle) ) / (total2-total) ))
-echo "Uso CPU: ${usage}%"
-# Disco
-df -h /home | awk 'NR==2{print "Disco libre: "$4}'
-\end{minted}
+LOG=/var/log/health.log
+while true; do
+  timestamp=$(date "+%F %T")
+  load=$(uptime | awk -F'load average: ' '{print $2}')
+  temp=$(vcgencmd measure_temp | cut -d= -f2)
+  echo "$timestamp | load: $load | temp: $temp" >> "$LOG"
+  sleep 60
+done
+  \end{minted}
+  \begin{warnbox}
+  Asegúrate de que \texttt{healthcheck.sh} tenga permisos de ejecución (\texttt{chmod +x healthcheck.sh}). Revisa el log periódicamente con \texttt{tail -f}.
+  \end{warnbox}
 \end{frame}
 
-%-------------------------------------------------------------- compartir
-\begin{frame}[fragile]{Compartir script con otra Pi}
-\begin{minted}{bash}
-$ scp diag.sh alumno@nodo02:/home/alumno/
-$ ssh alumno@nodo02 'bash /home/alumno/diag.sh'
-\end{minted}
-\pause
-\centering
-\includegraphics[width=0.7\linewidth]{example-image-duck}
+%------------------------------ sshfs -------------------------------
+\begin{frame}[fragile]{Compartir directorios con \texttt{sshfs}}
+  \begin{minted}{bash}
+$ sudo apt install -y sshfs
+$ mkdir -p ~/shared
+$ sshfs pi@head:/home/shared ~/shared
+# Trabaja como si fuera local...
+$ fusermount -u ~/shared  # para desmontar
+  \end{minted}
+  \begin{infobox}
+  \texttt{sshfs} utiliza el mismo mecanismo de autenticación que \texttt{ssh}. Asegúrate de tener configurado tu par de claves y permisos adecuados en el directorio remoto.
+  \end{infobox}
 \end{frame}
 
-%-------------------------------------------------------------- watch
-\begin{frame}[fragile]{Monitoreo en vivo (\texttt{watch})}
-\begin{minted}{bash}
-$ watch -n 2 ./diag.sh
-\end{minted}
-\begin{itemize}
-  \item Refresca la salida cada 2 s.  
-  \item Ideal para observar temperatura bajo carga.  
-\end{itemize}
+%------------------------------ nombres host -----------------------
+\begin{frame}[fragile]{Acceso por nombre de host}
+  Instala y habilita Avahi para resolución mDNS:
+  \begin{minted}{bash}
+$ sudo apt install -y avahi-daemon libnss-mdns
+$ sudo systemctl enable --now avahi-daemon
+  \end{minted}
+  \begin{itemize}
+    \item Con mDNS activo, puedes conectarte usando \texttt{ssh pi@node03.local} en lugar de la IP.
+    \item Asegúrate de que todos los nodos tengan nombres únicos y Avahi habilitado.
+  \end{itemize}
 \end{frame}
 
-%-------------------------------------------------------------- demo
-\begin{frame}{Demostración final}
-\begin{enumerate}
-  \item Ejecutar \texttt{diag.sh} remoto y mostrar datos.  
-  \item Explicar cómo se resolvió el hostname y qué claves se usan.  
-  \item Tiempo máximo de demo: \textbf{3 min por equipo}.  
-\end{enumerate}
+%------------------------------ actividad --------------------------
+\begin{frame}[fragile]{Actividad práctica}
+  \begin{enumerate}
+    \item Ejecuta las herramientas de monitoreo y comparte capturas de tu Pi bajo carga.
+    \item Lanza \texttt{healthcheck.sh} y revisa el log después de unos minutos.
+    \item Monta el directorio compartido con \texttt{sshfs} y crea un archivo de prueba.
+    \item Conéctate a otro nodo usando su nombre (\texttt{ssh pi@node02.local}) y verifica la presencia del archivo.
+  \end{enumerate}
 \end{frame}
 
-%-------------------------------------------------------------- cierre
-\begin{frame}[fragile]
-¡Desafío completado! 🎉\\
-\small Próxima semana → Montaje físico y NFS
+%------------------------------ resumen ----------------------------
+\begin{frame}[fragile]{Resumen}
+  \begin{itemize}
+    \item Practicaste el uso de herramientas de diagnóstico en tiempo real.
+    \item Automatizaste la recolección de métricas con un script de salud.
+    \item Compartiste directorios mediante \texttt{sshfs} y configuraste nombres de host.
+  \end{itemize}
+  \vspace{0.5em}
+  Con esto tu clúster está listo para tareas de cómputo distribuido.
 \end{frame}
 
 \end{document}
-

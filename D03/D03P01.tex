@@ -1,163 +1,101 @@
 % !TEX program = lualatex
-\documentclass[aspectratio=169, professionalfonts]{beamer}
-\usepackage[spanish]{babel}
-\usepackage{fontspec}
-\usepackage{graphicx}
-\usepackage{mwe}
-\usepackage{xcolor}
-\usepackage{emoji}
-\usepackage{minted}
-\setminted{
-  fontsize=\small,
-  bgcolor=gray!10,
-  linenos=false
-}
-\setmainfont{Libertinus Serif}
+\documentclass[aspectratio=169,professionalfonts]{beamer}
+\input{../preamble.tex}
 
-\title[ClústerLab • Día 3]{ClústerLab 2025\\\huge Raspberry Pi OS y monitoreo básico}
-\subtitle{Escuela de Computación Distribuida – ITM Medellín}
+\title[ClústerLab • Día 3]{Gestión del sistema y diagnóstico}
+\subtitle{Hostnames, usuarios y sincronización de reloj}
 \author{Equipo docente ClústerLab}
-\date{8 de agosto 2025}
+\date{8 de agosto de 2025}
 
 \begin{document}
 
-%----------------------------------------------------------------- title
+%------------------------------ portada ----------------------------
 \begin{frame}[plain]
   \titlepage
 \end{frame}
 
-%----------------------------------------------------------------- agenda
-\begin{frame}{Agenda Día 3 (09:00 – 13:00)}
-\begin{enumerate}
-  \item 09:00–09:15   Revisión rápida (IP + SSH).  
-  \item 09:15–10:00   Raspberry Pi OS Lite vs Desktop.  
-  \item 10:00–10:45   Cambiar hostname, crear usuarios, sudo.  
-  \item 10:45–11:30   Actualizar sistema y activar servicios.  
-  \item 11:30–12:30   Herramientas de monitoreo: \texttt{htop}, \texttt{df}, temperatura CPU.  
-  \item 12:30–13:00   Reto grupal: nodo accesible por nombre + script diagnóstico.  
-\end{enumerate}
+%------------------------------ objetivos --------------------------
+\begin{frame}[fragile]{Objetivos de la sesión}
+  \begin{itemize}
+    \item Personalizar el nombre de tu Raspberry Pi y crear un usuario dedicado al clúster.
+    \item Configurar la zona horaria y sincronizar la hora del sistema.
+    \item Conocer las herramientas básicas de diagnóstico del sistema.
+  \end{itemize}
 \end{frame}
 
-%----------------------------------------------------------------- lite vs desktop
-\begin{frame}{Raspberry Pi OS Lite vs Desktop}
-\begin{columns}[T]
-\begin{column}{0.55\textwidth}
-\begin{itemize}
-  \item \textbf{Lite}: sin entorno gráfico, arranque más rápido, menos RAM ≈ 300 MB.  
-  \item \textbf{Desktop}: incluye GUI, útil para demostraciones locales.  
-  \item Para el clúster usaremos **Lite** → menos sobre-carga.  
-\end{itemize}
-\end{column}
-\begin{column}{0.4\textwidth}
-  \centering\includegraphics[width=\linewidth]{example-image}
-\end{column}
-\end{columns}
+%------------------------------ agenda -----------------------------
+\begin{frame}[fragile]{Agenda (09:00 – 10:30)}
+  \begin{enumerate}
+    \item Revisión breve y retos del día.
+    \item Cambiar \texttt{/etc/hostname} y actualizar \texttt{/etc/hosts}.
+    \item Crear usuario \texttt{cluster} y asignar privilegios.
+    \item Ajustar la zona horaria con \texttt{timedatectl} y habilitar sincronización.
+  \end{enumerate}
 \end{frame}
 
-%----------------------------------------------------------------- hostname
-\begin{frame}[fragile]{Cambiar hostname}
-\begin{minted}{bash}
-# Editar hostname
-$ sudo nano /etc/hostname
-nodo01        # <--- nuevo nombre
-
-# Editar hosts para resolver localmente
+%------------------------------ hostname ---------------------------
+\begin{frame}[fragile]{Cambiar el nombre del host}
+  Define un nombre único para cada nodo:
+  \begin{minted}{bash}
+$ sudo hostnamectl set-hostname node01
 $ sudo nano /etc/hosts
-127.0.1.1   nodo01
-\end{minted}
-Tras reiniciar (\texttt{sudo reboot}) el prompt mostrará el nuevo nombre.
+127.0.1.1    node01
+  \end{minted}
+  Reinicia la sesión para aplicar cambios:
+  \begin{minted}{bash}
+$ exec bash
+  \end{minted}
+  \begin{infobox}
+  Utiliza un esquema consistente (\texttt{node01}, \texttt{node02}, …) para simplificar la administración y uso de \texttt{ssh}.
+  \end{infobox}
 \end{frame}
 
-%----------------------------------------------------------------- usuarios
-\begin{frame}[fragile]{Crear usuario y dar sudo}
-\begin{minted}{bash}
-# Añadir usuario alumno
-$ sudo adduser alumno
-# Agregar a grupo sudo
-$ sudo usermod -aG sudo alumno
-\end{minted}
-\begin{itemize}
-  \item Buen hábito: desactivar login del usuario \texttt{pi} cuando todo funcione.  
-  \item Ver grupos del usuario: \texttt{groups alumno}.  
-\end{itemize}
+%------------------------------ usuario cluster ---------------------
+\begin{frame}[fragile]{Crear usuario dedicado}
+  Para separar tareas de administración y experimentación:
+  \begin{minted}{bash}
+$ sudo adduser cluster
+$ sudo usermod -aG sudo cluster
+$ sudo passwd cluster
+  \end{minted}
+  \begin{itemize}
+    \item El grupo \texttt{sudo} otorga privilegios administrativos.
+    \item Trabaja habitualmente con el usuario \texttt{cluster} y emplea \texttt{sudo} sólo cuando sea necesario.
+  \end{itemize}
 \end{frame}
 
-%----------------------------------------------------------------- update & raspi-config
-\begin{frame}[fragile]{Actualizar sistema y raspi-config}
-\begin{minted}{bash}
-$ sudo apt update && sudo apt full-upgrade -y
-$ sudo raspi-config      # menú de configuración
-\end{minted}
-\begin{itemize}
-  \item Cambiar zona horaria y localización.  
-  \item Habilitar \texttt{ssh} si se desactivó.  
-  \item Expandir sistema de archivos (normalmente ya expandido).  
-\end{itemize}
+%------------------------------ sincronización ---------------------
+\begin{frame}[fragile]{Sincronizar zona horaria y reloj}
+  Configura la zona horaria adecuada y activa NTP:
+  \begin{minted}{bash}
+$ timedatectl list-timezones | grep America/Santiago
+$ sudo timedatectl set-timezone America/Santiago
+$ sudo timedatectl set-ntp true
+$ timedatectl status
+  \end{minted}
+  \begin{infobox}
+  Un reloj sincronizado evita errores en Slurm y certificados SSL. Verifica que la salida muestre \texttt{System clock synchronized: yes}.
+  \end{infobox}
 \end{frame}
 
-%----------------------------------------------------------------- htop / df
-\begin{frame}[fragile]{Monitoreo rápido}
-\begin{columns}[T]
-\begin{column}{0.52\textwidth}
-\texttt{htop} (CPU, RAM, procesos)  
-\begin{minted}{bash}
-$ sudo apt install htop
-$ htop
-\end{minted}
-
-\texttt{df -h} (uso de disco)  
-\begin{minted}{bash}
-$ df -h
-\end{minted}
-\end{column}
-\begin{column}{0.43\textwidth}
-  \includegraphics[width=\linewidth]{example-image-b}
-\end{column}
-\end{columns}
+%------------------------------ revisión ---------------------------
+\begin{frame}[fragile]{Revisión breve y retos}
+  \begin{itemize}
+    \item Repasa los conceptos de redes, claves SSH y scripting vistos en los días anteriores.
+    \item Propón un reto: automatiza la creación del usuario y la configuración del hostname mediante un script.
+    \item Comparte tus soluciones con tus compañeros para mejorar juntos.
+  \end{itemize}
 \end{frame}
 
-%----------------------------------------------------------------- temperatura
-\begin{frame}[fragile]{Temperatura del CPU y voltaje}
-\begin{minted}{bash}
-$ vcgencmd measure_temp
-temp=42.0'C
-$ vcgencmd measure_volts
-volt=0.86V
-\end{minted}
-Para monitorizar continuamente:  
-\begin{minted}{bash}
-watch -n 2 vcgencmd measure_temp
-\end{minted}
-\end{frame}
-
-%----------------------------------------------------------------- acceso remoto
-\begin{frame}{Acceso remoto por nombre de host}
-\begin{itemize}
-  \item Linux/macOS → mDNS (\textit{hostname.local}) funciona por defecto.  
-  \item En Windows instala \emph{Bonjour Print Services} o usa un archivo \texttt{C:\textbackslash Windows\textbackslash System32\textbackslash drivers\textbackslash etc\textbackslash hosts}.  
-  \item Objetivo: \texttt{ssh alumno@nodo01.local} sin conocer la IP.  
-\end{itemize}
-\end{frame}
-
-%----------------------------------------------------------------- reto grupal
-\begin{frame}[fragile]{Reto grupal (12:30 – 13:00)}
-\begin{enumerate}
-  \item Cambiar hostname → \texttt{nodoXX}.  
-  \item Configurar acceso SSH por clave, sin contraseña.  
-  \item Escribir \texttt{diag.sh} que muestre:
-    \begin{itemize}
-      \item Hostname + temperatura + uso CPU.  
-      \item Espacio libre en \texttt{/home}.  
-    \end{itemize}
-  \item Compartir el script con otra Pi y ejecutarlo remotamente.  
-\end{enumerate}
-\end{frame}
-
-%----------------------------------------------------------------- cierre
-\begin{frame}[fragile]
-Nodo listo y monitoreado ✔\\
-\small ¡Fin de la Semana 1!
+%------------------------------ resumen ----------------------------
+\begin{frame}[fragile]{Resumen}
+  \begin{itemize}
+    \item Asignaste un nombre de host coherente y actualizaste \texttt{/etc/hosts}.
+    \item Creaste un usuario dedicado para las prácticas de clúster.
+    \item Sincronizaste la zona horaria y habilitaste la sincronización NTP.
+  \end{itemize}
+  \vspace{0.5em}
+  Con estas bases, podemos empezar a monitorear el rendimiento del sistema.
 \end{frame}
 
 \end{document}
-

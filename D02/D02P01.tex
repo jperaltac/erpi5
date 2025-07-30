@@ -1,153 +1,113 @@
 % !TEX program = lualatex
-\documentclass[aspectratio=169, professionalfonts]{beamer}
-\usepackage[spanish]{babel}
-\usepackage{fontspec}
-\usepackage{graphicx}
-\usepackage{verbatim}
-\usepackage{mwe}            % imágenes de ejemplo
-\usepackage{xcolor}
-\usepackage{emoji}
-\usepackage{minted}         % bloques de código
-\setminted{
-  fontsize=\small,
-  bgcolor=gray!10,
-  linenos=false
-}
-\setmainfont{Libertinus Serif}
+\documentclass[aspectratio=169,professionalfonts]{beamer}
+\input{../preamble.tex}
 
-\title[ClústerLab • Día 2]{ClústerLab 2025\\\huge Redes IP y SSH seguro}
-\subtitle{Escuela de Computación Distribuida – ITM Medellín}
+\title[ClústerLab • Día 2]{Redes IP y claves SSH}
+\subtitle{Configurar IP estática y generar claves}
 \author{Equipo docente ClústerLab}
-\date{6 de agosto 2025}
+\date{6 de agosto de 2025}
 
 \begin{document}
 
-%---------------------------------- title ----------------------------------
+%------------------------------ portada ----------------------------
 \begin{frame}[plain]
   \titlepage
 \end{frame}
 
-%---------------------------------- agenda ---------------------------------
-\begin{frame}{Agenda Día 2 (09:00–13:00)}
-\begin{enumerate}
-  \item 09:00–09:15  Revisión rápida (comandos Día 1)
-  \item 09:15–10:30  Conceptos IP, máscaras y subredes
-  \item 10:45–11:30  SSH seguro + claves públicas
-  \item 11:30–12:00  Transferencia y montaje remoto (\texttt{scp}/\texttt{sshfs})
-  \item 12:00–13:00  Actividad: \texttt{ping\_all.sh} + compartir carpeta
-\end{enumerate}
+%------------------------------ objetivos --------------------------
+\begin{frame}[fragile]{Objetivos de la sesión}
+  \begin{itemize}
+    \item Repasar conceptos básicos de redes IP y asignar una dirección estática.
+    \item Descubrir vecinos en la subred usando \texttt{nmap}.
+    \item Generar y copiar una clave SSH para acceso sin contraseña.
+    \item Preparar la Pi para trabajo remoto desde la siguiente sesión.
+  \end{itemize}
 \end{frame}
 
-%---------------------------------- conceptos IP ---------------------------
-\begin{frame}{Dirección IP vs. máscara de red}
-\begin{columns}[T]
-\begin{column}{0.55\textwidth}
-\begin{block}{IPv4}
-  \texttt{192.168.\textbf{1}.42}\newline
-  \small 4 octetos = 32 bits
-\end{block}
-\pause
-\begin{itemize}
-  \item Red casera típica → \texttt{192.168.1.0/24}
-  \item Máscara \texttt{255.255.255.0} (24 bits de red)
-  \item Último octeto identifica el host (0–255)
-\end{itemize}
-\end{column}
-\begin{column}{0.4\textwidth}
-  \centering\includegraphics[width=\linewidth]{example-image}
-\end{column}
-\end{columns}
+%------------------------------ agenda -----------------------------
+\begin{frame}[fragile]{Agenda (09:00 – 10:30)}
+  \begin{enumerate}
+    \item Revisión flash de SD/SSH (5 preguntas tipo Kahoot).
+    \item Redes IP y configuración estática via \texttt{dhcpcd.conf}.
+    \item Escaneo de vecinos con \texttt{nmap}.
+    \item Generar par de claves RSA y copiar a la Raspberry Pi.
+  \end{enumerate}
 \end{frame}
 
-%---------------------------------- comandos red ---------------------------
-\begin{frame}{Comandos de red útiles}
-\begin{itemize}
-  \item Ver interfaces → \mintinline{bash}|ip a|
-  \item Tabla de rutas → \mintinline{bash}|ip r|
-  \item Comprobar conectividad → \mintinline{bash}|ping 192.168.1.1|
-  \item Escanear red → \mintinline{bash}|nmap -sP 192.168.1.0/24|
-\end{itemize}
-\pause
-\begin{block}{WSL tip}
-En WSL 2 las subredes son distintas; usa la IP de tu adaptador físico (Ethernet/Wi-Fi) para conectarte a las Pi.
-\end{block}
+%------------------------------ revisión flash ---------------------
+\begin{frame}[fragile]{Revisión flash}
+  \begin{itemize}
+    \item Cinco preguntas rápidas para reforzar conceptos del Día 1.
+    \item Utiliza tu teléfono o laptop para responder en tiempo real.
+    \item Comparte dudas antes de avanzar a redes.
+  \end{itemize}
 \end{frame}
 
-%---------------------------------- ssh seguro -----------------------------
-\begin{frame}[fragile]{SSH con clave pública}
-\begin{enumerate}
-  \item Generar clave (local):  
-\begin{minted}{bash}
-$ ssh-keygen -t ed25519
-\end{minted}
-  \item Copiar clave a la Pi:  
-\begin{minted}{bash}
-$ ssh-copy-id pi@192.168.1.50
-\end{minted}
-  \item Probar login sin contraseña:  
-\begin{minted}{bash}
-$ ssh pi@192.168.1.50
-\end{minted}
-\end{enumerate}
-\pause
-\small
-\emoji{lock} Para deshabilitar contraseñas: editar \texttt{/etc/ssh/sshd\_config} y poner  
-\texttt{PasswordAuthentication no}, luego \texttt{sudo systemctl restart ssh}.
+%------------------------------ IP estática ------------------------
+\begin{frame}[fragile]{Configurar IP estática}
+  Edita \texttt{/etc/dhcpcd.conf} para definir una IP fija:
+  \begin{minted}{bash}
+sudo nano /etc/dhcpcd.conf
+interface eth0
+static ip_address=10.0.0.21/24
+static routers=10.0.0.1
+static domain_name_servers=8.8.8.8 8.8.4.4
+  \end{minted}
+  Después de guardar, reinicia el servicio:
+  \begin{minted}{bash}
+$ sudo systemctl restart dhcpcd
+  \end{minted}
+  \begin{infobox}
+  Elige una dirección única dentro de la subred del aula (10.0.0.X). Consulta con tu grupo para evitar conflictos.
+  \end{infobox}
 \end{frame}
 
-
-\begin{comment}
-
-\begin{frame}{Copiar y montar carpetas remotas}
-\begin{columns}[T]
-\begin{column}{0.48\textwidth}
-\textbf{\texttt{scp}}
-\begin{minted}{bash}
-$ scp datos.csv pi@192.168.1.50:/home/pi/
-\end{minted}
-\end{column}
-\begin{column}{0.48\textwidth}
-\textbf{\texttt{sshfs}}
-%\begin{minted}{bash}
-%$ mkdir ~/pi_home
-%$ sshfs pi@192.168.1.50:/home/pi ~/pi\_home
-%\end{minted}
-\end{column}
-\end{columns}
-\pause
-\centering
-\includegraphics[width=0.7\linewidth]{example-image-duck}
+%------------------------------ nmap scan --------------------------
+\begin{frame}[fragile]{Descubrir vecinos con \texttt{nmap}}
+  Instala la herramienta y explora quién está conectado:
+  \begin{minted}{bash}
+$ sudo apt install -y nmap
+$ nmap -sn 10.0.0.0/24          # escaneo rápido de hosts
+$ nmap -p 22 --open 10.0.0.0/24 # encontrar servicios SSH activos
+  \end{minted}
+  \begin{itemize}
+    \item La opción \texttt{-sn} (ping scan) lista IP y latencias.
+    \item Usa \texttt{-p} para verificar puertos específicos como SSH.
+  \end{itemize}
 \end{frame}
 
-\end{comment}
-
-%---------------------------------- actividad ------------------------------
-\begin{comment}
-\begin{frame}{Actividad (12:00 – 13:00)}
-\begin{enumerate}
-  \item Escribe \texttt{ping\_all.sh}:  
-\begin{minted}{bash}
-#!/usr/bin/env bash
-for ip in 192.168.1.{50..60}; do
-  if ping -c1 -W1 $ip &>/dev/null; then
-    echo "$ip OK"
-  else
-    echo "$ip FAIL"
-  fi
-done
-\end{minted}
-  \item Colócalo en \texttt{\/home\/pi\/bin}, hazlo ejecutable y pruébalo.  
-  \item Monta una carpeta remota vía \texttt{sshfs} y transfiere un archivo.  
-\end{enumerate}
+%------------------------------ claves SSH -------------------------
+\begin{frame}[fragile]{Generar y copiar una clave SSH}
+  \begin{minted}{bash}
+# Genera un par RSA de 4096 bits con comentario
+$ ssh-keygen -t rsa -b 4096 -C "tu@correo"
+# Copia la clave pública a la Raspberry Pi
+$ ssh-copy-id pi@10.0.0.21
+  \end{minted}
+  \begin{infobox}
+  La autenticación sin contraseña simplifica el uso de \texttt{scp} y \texttt{rsync}. Protege tu clave privada (\texttt{~/.ssh/id\_rsa}) con permisos 600.
+  \end{infobox}
 \end{frame}
-\end{comment}
 
-\begin{comment}
-\begin{frame}[standout]
-Red y SSH listos\\
-\small Siguiente Bash avanzado y automatización
+%------------------------------ actividad --------------------------
+\begin{frame}[fragile]{Actividad práctica}
+  \begin{enumerate}
+    \item Asigna una IP estática a tu Pi y reinicia la interfaz.
+    \item Escanea la red para registrar IP y hostname de tus compañeros.
+    \item Genera tu par de claves y copia la pública a la Pi.
+    \item Comparte la lista de IP/hostnames en el canal del curso.
+  \end{enumerate}
 \end{frame}
-\end{comment}
+
+%------------------------------ resumen ----------------------------
+\begin{frame}[fragile]{Resumen}
+  \begin{itemize}
+    \item Configuraste una IP estática con \texttt{dhcpcd.conf} y reiniciaste el servicio.
+    \item Descubriste dispositivos en tu subred usando \texttt{nmap}.
+    \item Generaste una clave SSH segura y habilitaste el acceso sin contraseña.
+  \end{itemize}
+  \vspace{0.5em}
+  Listo para comenzar a trabajar de manera remota a partir del Día 3.
+\end{frame}
 
 \end{document}
-

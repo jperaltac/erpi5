@@ -1,147 +1,152 @@
 % !TEX program = lualatex
-\documentclass[aspectratio=169, professionalfonts]{beamer}
-\usepackage[spanish]{babel}
-\usepackage{fontspec}
-\usepackage{graphicx}
-\usepackage{mwe}
-\usepackage{xcolor}
-\usepackage{minted}
-\usepackage{emoji}
-\setminted{
-  fontsize=\small,
-  bgcolor=gray!10,
-  linenos=false
-}
-\setmainfont{Libertinus Serif}
+\documentclass[aspectratio=169,professionalfonts]{beamer}
+\input{../preamble.tex}
 
-\title[ClústerLab • Día 2]{Bash avanzado: condicionales y bucles}
-\subtitle{Hands-on en Raspberry Pi 5}
+\title[ClústerLab • Día 2]{Bash avanzado y transferencia}
+\subtitle{Condicionales, bucles y copias seguras}
 \author{Equipo docente ClústerLab}
-\date{6 de agosto 2025}
+\date{6 de agosto de 2025}
 
 \begin{document}
 
-%---------------------------------- title ----------------------------------
+%------------------------------ portada ----------------------------
 \begin{frame}[plain]
   \titlepage
 \end{frame}
 
-%---------------------------------- if -------------------------------------
-\begin{frame}[fragile]{Condicional \texttt{if}}
-\begin{minted}{bash}
-read -p "Archivo: " f
-if [[ -f $f ]]; then
-  echo "Existe y es regular"
-else
-  echo "No existe"
-fi
-\end{minted}
-\pause
-\begin{itemize}
-  \item \texttt{-f}, \texttt{-d}, \texttt{-x}, \texttt{-s}  pruebas de archivo
-  %\item Comparar cadenas: \texttt{[[ "\$var" == "abc" ]]}
-  %\item Código de salida en \texttt{\$?}
-\end{itemize}
+%------------------------------ objetivos --------------------------
+\begin{frame}[fragile]{Objetivos de la sesión}
+  \begin{itemize}
+    \item Comprender condicionales \texttt{if}/\texttt{elif}/\texttt{else} en Bash.
+    \item Utilizar bucles \texttt{for}, \texttt{while} y \texttt{case}.
+    \item Desarrollar \texttt{ping\_all.sh} para medir latencias en la subred.
+    \item Transferir archivos con \texttt{scp} y \texttt{rsync}, verificando integridad con \texttt{sha256sum}.
+  \end{itemize}
 \end{frame}
 
-%---------------------------------- for/while --------------------------------
-\begin{frame}[fragile]{Bucles \texttt{for} y \texttt{while}}
-\begin{columns}[T]
-\begin{column}{0.55\textwidth}
-\textbf{\texttt{for}}
-\begin{minted}{bash}
-for n in {1..5}; do
-  echo "Iteración $n"
-done
-\end{minted}
-
-\textbf{\texttt{while}}
-\begin{minted}{bash}
-contador=0
-while (( contador < 3 )); do
-  echo $contador
-  ((contador++))
-done
-\end{minted}
-\end{column}
-\begin{column}{0.4\textwidth}
-\includegraphics[width=\linewidth]{example-image-b}
-\end{column}
-\end{columns}
+%------------------------------ agenda -----------------------------
+\begin{frame}[fragile]{Agenda (10:45 – 13:00)}
+  \begin{enumerate}
+    \item Condicionales en Bash: \texttt{if}, \texttt{elif}, \texttt{else}.
+    \item Bucles \texttt{for}, \texttt{while} y estructura \texttt{case}.
+    \item Script \texttt{ping\_all.sh} para recorrer una subred.
+    \item Copiar y sincronizar datos con \texttt{scp}/\texttt{rsync}.
+    \item Verificar archivos con \texttt{sha256sum}.
+  \end{enumerate}
 \end{frame}
 
-%---------------------------------- case -----------------------------------
-\begin{frame}[fragile]{Estructura \texttt{case}}
-\begin{minted}{bash}
-case $1 in
-  start)  systemctl start myapp ;;
-  stop)   systemctl stop  myapp ;;
-  status) systemctl status myapp ;;
-  *)      echo "Uso: $0 {start|stop|status}" ;;
-esac
-\end{minted}
-\end{frame}
-
-%---------------------------------- arrays ----------------------------------
-\begin{frame}[fragile]{Arrays en Bash}
-\begin{minted}{bash}
-HOSTS=(node1 node2 node3)
-echo "Total: ${#HOSTS[@]}"
-for h in "${HOSTS[@]}"; do
-  ssh $h uptime
-done
-\end{minted}
-\end{frame}
-
-%---------------------------------- script completo -------------------------
-\begin{frame}[fragile]{Ejemplo completo — \texttt{ping\_all.sh}}
-\begin{minted}{bash}
+%------------------------------ condicionales ----------------------
+\begin{frame}[fragile]{Condicionales en Bash}
+  Evaluar condiciones y ejecutar bloques de código:
+  \begin{minted}{bash}
 #!/usr/bin/env bash
-IPS=(192.168.1.{50..60})
-for ip in "${IPS[@]}"; do
-  if ping -c1 -W1 $ip &>/dev/null; then
-    echo -e "$ip \e[32mOK\e[0m"
-  else
-    echo -e "$ip \e[31mFAIL\e[0m"
+FILE="$1"
+if [ -f "$FILE" ]; then
+  echo "El archivo $FILE existe"
+elif [ -d "$FILE" ]; then
+  echo "$FILE es un directorio"
+else
+  echo "No existe $FILE"
+fi
+  \end{minted}
+  \begin{infobox}
+  Las expresiones entre corchetes \texttt{[ ]} admiten comparaciones de cadenas (\texttt{=}, \texttt{!=}) y números (\texttt{-lt}, \texttt{-eq}, etc.).
+  \end{infobox}
+\end{frame}
+
+%------------------------------ bucles -----------------------------
+\begin{frame}[fragile]{Bucles \texttt{for} y \texttt{while}}
+  \begin{minted}{bash}
+# Recorre direcciones IP de 1 a 254
+for host in {1..254}; do
+  ip="10.0.0.$host"
+  ping -c1 -W1 $ip &> /dev/null && echo "$ip activo"
+done
+
+# Cuenta de 0 a 4 con while
+i=0
+while [ $i -lt 5 ]; do
+  echo "Número $i"
+  ((i++))
+done
+  \end{minted}
+  \begin{infobox}
+  Utiliza \texttt{case} para múltiples posibilidades:
+  \begin{minted}{bash}
+case "$1" in
+  start) echo "Arrancando";;
+  stop)  echo "Deteniendo";;
+  *)     echo "Uso: $0 {start|stop}";;
+esac
+  \end{minted}
+  \end{infobox}
+\end{frame}
+
+%------------------------------ ping_all ---------------------------
+\begin{frame}[fragile]{Script \texttt{ping\_all.sh}}
+  \begin{minted}{bash}
+#!/usr/bin/env bash
+network="10.0.0"
+for host in {1..254}; do
+  ip="$network.$host"
+  if ping -c1 -W1 "$ip" &> /dev/null; then
+    rtt=$(ping -c1 -W1 "$ip" | grep -oP 'time=\K[\d.]+')
+    echo "$ip responde en ${rtt} ms"
   fi
 done
-\end{minted}
+  \end{minted}
+  \begin{warnbox}
+  Ejecutar el script en paralelo con varios grupos puede generar tráfico intenso; coordina con tu instructor.
+  \end{warnbox}
 \end{frame}
 
-%---------------------------------- sshfs -----------------------------------
-\begin{frame}[fragile]{Montar carpeta remota con \texttt{sshfs}}
-\begin{minted}{bash}
-$ sudo apt install sshfs         # si es necesario
-$ mkdir ~/pi_share
-$ sshfs pi@node2:/home/pi ~/pi_share
-...
-$ fusermount -u ~/pi_share       # desmontar
-\end{minted}
+%------------------------------ transferencia ---------------------
+\begin{frame}[fragile]{Transferencia con \texttt{scp} y \texttt{rsync}}
+  Copia un archivo a la Pi:
+  \begin{minted}{bash}
+$ scp informe.pdf pi@10.0.0.21:~/
+  \end{minted}
+  Sincroniza un directorio local con el remoto:
+  \begin{minted}{bash}
+$ rsync -avz proyectos/ pi@10.0.0.21:~/proyectos/
+  \end{minted}
+  \begin{infobox}
+  La opción \texttt{-z} de \texttt{rsync} habilita compresión; \texttt{-a} conserva permisos y tiempos.
+  \end{infobox}
 \end{frame}
 
-%---------------------------------- reto ------------------------------------
-\begin{frame}[fragile]{Mini-reto (15 min)}
-\begin{enumerate}
-  %\item Modifica \texttt{ping\_all.sh} para guardar salida en \texttt{logs/\$(date +\%F).txt}.  
-  \item Copia el log a otra Pi con \texttt{scp}.  
-  \item Verifica permisos y propietario después de la transferencia.  
-\end{enumerate}
+%------------------------------ hash -------------------------------
+\begin{frame}[fragile]{Verificación con \texttt{sha256sum}}
+  Calcula y compara hashes para asegurar integridad:
+  \begin{minted}{bash}
+$ sha256sum archivo.txt
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  archivo.txt
+  \end{minted}
+  \begin{itemize}
+    \item Ejecuta el comando antes y después de transferir.
+    \item Si los hashes coinciden, la copia es correcta.
+  \end{itemize}
 \end{frame}
 
-%---------------------------------- recursos --------------------------------
-\begin{frame}{Recursos extra}
-\begin{itemize}
-  \item Advanced Bash Scripting Guide — TLDP  
-  \item \url{https://explainshell.com}  
-  \item \texttt{man bash}, \texttt{help builtin}  
-\end{itemize}
+%------------------------------ actividad --------------------------
+\begin{frame}[fragile]{Actividad práctica}
+  \begin{enumerate}
+    \item Implementa y ejecuta \texttt{ping\_all.sh} en tu subred.
+    \item Copia un archivo de al menos 10 MB a tu Pi usando \texttt{scp} y mide el tiempo.
+    \item Repite la copia con \texttt{rsync} y compara tiempos.
+    \item Verifica los hashes SHA‑256 para confirmar integridad.
+  \end{enumerate}
 \end{frame}
 
-%---------------------------------- cierre ----------------------------------
-\begin{frame}[fragile]
-¡Trabajo completado!\\
-\small Próximo día → Raspberry Pi OS y monitoreo
+%------------------------------ resumen ----------------------------
+\begin{frame}[fragile]{Resumen}
+  \begin{itemize}
+    \item Aprendiste a escribir condicionales y bucles en Bash.
+    \item Creaste un script para mapear y medir latencias en la red.
+    \item Transferiste y sincronizaste archivos de forma eficiente y segura.
+  \end{itemize}
+  \vspace{0.5em}
+  ¡Terminó la configuración básica de tu entorno remoto!
 \end{frame}
 
 \end{document}
-
