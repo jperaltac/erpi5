@@ -1,4 +1,4 @@
-SUBDIRS := $(shell seq -f "D%02g" 1 6) MLGeneral
+SUBDIRS := $(shell seq -f "D%02g" 1 8) MLGeneral
 
 all:
 	@for dir in $(SUBDIRS); do \
