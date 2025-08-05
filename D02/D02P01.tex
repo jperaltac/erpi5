@@ -3,10 +3,10 @@
 \input{../preamble.tex}
 \usepackage{mwe} % figuras de ejemplo -> example-image
 
-\title[ClústerLab • Día 2]{Redes IP y claves SSH}
+\title[ClústerLab • Día 2]{Redes IP y claves SSH}
 \subtitle{Configurar IP estática y generar claves}
 \author{Equipo docente ClústerLab}
-\date{6 de agosto de 2025}
+\date{6 de agosto de 2025}
 
 \begin{document}
 
@@ -15,10 +15,68 @@
   \titlepage
 \end{frame}
 
+%------------------------------ básico de redes -------------------------
+\begin{frame}[fragile]{Básico de redes}
+  Los computadores y otros dispositivos, para comunicarse entre ellos, necesitan una especie de nombre,
+  que sería la \textit{ip address}, o dirección ip (ip: internet protocol).
+
+  La forma más común de ip es la IPv4 (ej: 192.168.0.155).
+
+  La ip se la da la entidad que esté por encima del dispositivo, entonces, un celular recibe su ip de 
+  el router o de la antena 4G/5G. El router y la antena reciben su ip de la ISP (internet service provider),
+  como Claro o Movistar. Y estas ISP reciben sus ips de organismos mundiales (LACNIC <- ICANN/IANA)
+\end{frame}
+
+%------------------------------ network dentro -------------------------
+\begin{frame}[fragile]{Dentro una network}
+  Generalmente, se le asigna una IP única a cada dispositivo. Y, generalmente, esa IP se mantiene a lo largo del tiempo.
+  Para ver la ip que uno tiene, en linux:
+  \begin{minted}{bash}
+  $ ip a
+  \end{minted}
+  \begin{center}
+    \includegraphics[width=.45\textwidth]{cisco_network_diagram.png}
+  \end{center}
+\end{frame}
+
+%------------------------------ prueba ip -------------------------
+\begin{frame}[fragile]{Verificar conectividad}
+  \begin{minted}{bash}
+$ ip addr show eth0 | grep 'inet '
+$ ping -c3 10.0.0.1
+  \end{minted}
+  \begin{itemize}
+    \item Confirma que la IP asignada se muestre en \texttt{inet}.
+    \item Un par de \texttt{ping} verifica la ruta al gateway.
+  \end{itemize}
+  \begin{center}
+    \includegraphics[width=.6\textwidth]{ipping.png}
+  \end{center}
+\end{frame}
+
+%------------------------------ info ---------------------------
+\begin{frame}[fragile]{Info importante}
+  \begin{infobox}
+    las ip que terminen en \texttt{.0}, \texttt{.1} o \texttt{.255} suelen ser reservadas. Intentar no molestar esas IPs
+
+    \begin{itemize}
+      \item red: \texttt{x.x.x.0}
+      \item router: \texttt{x.x.x.1}
+      \item todos: \texttt{x.x.x.255}
+    \end{itemize}
+  \end{infobox}
+  \begin{infobox}
+    Intentar usar el comando \texttt{ping} siempre con \texttt{-c4} u otro número bajo. Sino, se quedará ejecutando hasta que sea interrumpido.
+
+    \texttt{ping -c4}
+  \end{infobox}
+\end{frame}
+
 %------------------------------ ssh test ---------------------------
 \begin{frame}[fragile]{Probar acceso SSH}
   \begin{minted}{bash}
 $ ssh pi@10.0.0.21 hostname
+$ ssh pi@10.0.0.21 hostnamectl
   \end{minted}
   Si la autenticación funciona, verás el nombre de tu Pi en la salida.
   \begin{minted}{bash}
@@ -33,79 +91,48 @@ $ ssh rpi21
   \end{minted}
 \end{frame}
 
-%------------------------------ nmap opciones ----------------------
-\begin{frame}[fragile]{Opciones útiles de \texttt{nmap}}
-  \begin{minted}{bash}
-$ nmap -A 10.0.0.0/24       # detección de servicios y SO
-$ nmap --open -p 80 10.0.0.* # buscar servidores web
-  \end{minted}
-  \begin{itemize}
-    \item \texttt{-A} entrega información detallada y requiere más tiempo.
-    \item Limita el rango si la red está muy concurrida.
-  \end{itemize}
-\end{frame}
-
-%------------------------------ prueba ip -------------------------
-\begin{frame}[fragile]{Verificar conectividad}
-  \begin{minted}{bash}
-$ ip addr show eth0 | grep 'inet '
-$ ping -c3 10.0.0.1
-  \end{minted}
-  \begin{itemize}
-    \item Confirma que la IP asignada se muestre en \texttt{inet}.
-    \item Un par de \texttt{ping} verifica la ruta al gateway.
-  \end{itemize}
-  \begin{center}
-    \includegraphics[width=.45\textwidth]{example-image-a}
-  \end{center}
-\end{frame}
-
-%------------------------------ objetivos --------------------------
-\begin{frame}[fragile]{Objetivos de la sesión}
-  \begin{itemize}
-    \item Repasar conceptos básicos de redes IP y asignar una dirección estática.
-    \item Descubrir vecinos en la subred usando \texttt{nmap}.
-    \item Generar y copiar una clave SSH para acceso sin contraseña.
-    \item Preparar la Pi para trabajo remoto desde la siguiente sesión.
-  \end{itemize}
-\end{frame}
-
-%------------------------------ agenda -----------------------------
-\begin{frame}[fragile]{Agenda (09:00 – 10:30)}
+%------------------------------ sin contraseña --------------------------
+\begin{frame}[fragile]{Usar ssh sin contraseña}
+  Útil para conexiones frecuentes o contraseñas complejas. Sólo necesitas usar la contraseña una única vez.
   \begin{enumerate}
-    \item Revisión flash de SD/SSH (5 preguntas tipo Kahoot).
-    \item Redes IP y configuración estática via \texttt{dhcpcd.conf}.
-    \item Escaneo de vecinos con \texttt{nmap}.
-    \item Generar par de claves RSA y copiar a la Raspberry Pi.
+    \item Primero, generar claves, una pública y una privada.
+    \begin{minted}{bash}
+     $ ssh-keygen -t ed25519
+    \end{minted}
+    \item Generará 2 archivos,
+    \begin{itemize}
+      \item \texttt{\textasciitilde/.ssh/id\_ed25519} clave \textbf{privada}. Nunca compartir.
+      \item \texttt{\textasciitilde/.ssh/id\_ed25519.pub} clave \textbf{pública}. Esta se copiará al servidor.
+    \end{itemize}
+    \item Usar el commando \texttt{ssh-copy-id} para copiar la clave pública al servidor.
+    \begin{minted}{bash}
+     $ ssh-copy-id pi@10.0.0.21
+    \end{minted}
+    \item Se te pedirá la contraseña una única vez, y la clave pública será añadida a \texttt{\textasciitilde/.ssh/authorized\_keys} del servidor.
   \end{enumerate}
 \end{frame}
 
-%------------------------------ revisión flash ---------------------
-\begin{frame}[fragile]{Revisión flash}
-  \begin{itemize}
-    \item Cinco preguntas rápidas para reforzar conceptos del Día 1.
-    \item Utiliza tu teléfono o laptop para responder en tiempo real.
-    \item Comparte dudas antes de avanzar a redes.
-  \end{itemize}
-\end{frame}
-
-%------------------------------ IP estática ------------------------
-\begin{frame}[fragile]{Configurar IP estática}
-  Edita \texttt{/etc/dhcpcd.conf} para definir una IP fija:
+%------------------------------ claves SSH -------------------------
+\begin{frame}[fragile]{Usar ssh sin contraseña}
   \begin{minted}{bash}
-sudo nano /etc/dhcpcd.conf
-interface eth0
-static ip_address=10.0.0.21/24
-static routers=10.0.0.1
-static domain_name_servers=8.8.8.8 8.8.4.4
-  \end{minted}
-  Después de guardar, reinicia el servicio:
-  \begin{minted}{bash}
-$ sudo systemctl restart dhcpcd
+# Genera un par RSA de 4096 bits con comentario
+$ ssh-keygen -t rsa -b 4096 -C "tu@correo"
+# Copia la clave pública a la Raspberry Pi
+$ ssh-copy-id pi@10.0.0.21
   \end{minted}
   \begin{infobox}
-  Elige una dirección única dentro de la subred del aula (10.0.0.X). Consulta con tu grupo para evitar conflictos.
+  La autenticación sin contraseña simplifica el uso de \texttt{scp} y \texttt{rsync}. Protege tu clave privada (\texttt{\textasciitilde/.ssh/id\_rsa}) con permisos 600.
   \end{infobox}
+\end{frame}
+
+%------------------------------ puertos %---------------------------
+\begin{frame}[fragile]{Puertos Comúnes}
+  \begin{itemize}
+    \item \texttt{21} es el puerto ftp (file transfer)
+    \item \texttt{22} es el puerto ssh (conexión remota)
+    \item \texttt{80} es el puerto http (página web)
+    \item \texttt{443} es el puerto https (página web segura)
+  \end{itemize}
 \end{frame}
 
 %------------------------------ nmap scan --------------------------
@@ -122,39 +149,17 @@ $ nmap -p 22 --open 10.0.0.0/24 # encontrar servicios SSH activos
   \end{itemize}
 \end{frame}
 
-%------------------------------ claves SSH -------------------------
-\begin{frame}[fragile]{Generar y copiar una clave SSH}
+
+%------------------------------ nmap opciones ----------------------
+\begin{frame}[fragile]{Opciones útiles de \texttt{nmap}}
   \begin{minted}{bash}
-# Genera un par RSA de 4096 bits con comentario
-$ ssh-keygen -t rsa -b 4096 -C "tu@correo"
-# Copia la clave pública a la Raspberry Pi
-$ ssh-copy-id pi@10.0.0.21
+$ nmap -A 10.0.0.0/24       # detección de servicios y SO
+$ nmap --open -p 80 10.0.0.* # buscar servidores web
   \end{minted}
-  \begin{infobox}
-  La autenticación sin contraseña simplifica el uso de \texttt{scp} y \texttt{rsync}. Protege tu clave privada (\texttt{~/.ssh/id\_rsa}) con permisos 600.
-  \end{infobox}
-\end{frame}
-
-%------------------------------ actividad --------------------------
-\begin{frame}[fragile]{Actividad práctica}
-  \begin{enumerate}
-    \item Asigna una IP estática a tu Pi y reinicia la interfaz.
-    \item Escanea la red para registrar IP y hostname de tus compañeros.
-    \item Genera tu par de claves y copia la pública a la Pi.
-    \item Conéctate vía SSH y ejecuta \texttt{uptime} para validar acceso.
-    \item Comparte la lista de IP/hostnames en el canal del curso.
-  \end{enumerate}
-\end{frame}
-
-%------------------------------ resumen ----------------------------
-\begin{frame}[fragile]{Resumen}
   \begin{itemize}
-    \item Configuraste una IP estática con \texttt{dhcpcd.conf} y reiniciaste el servicio.
-    \item Descubriste dispositivos en tu subred usando \texttt{nmap}.
-    \item Generaste una clave SSH segura y habilitaste el acceso sin contraseña.
+    \item \texttt{-A} entrega información detallada y requiere más tiempo.
+    \item Limita el rango si la red está muy concurrida.
   \end{itemize}
-  \vspace{0.5em}
-  Listo para comenzar a trabajar de manera remota a partir del Día 3.
 \end{frame}
 
 \end{document}

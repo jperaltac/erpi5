@@ -15,10 +15,25 @@
   \titlepage
 \end{frame}
 
+%------------------------------ rsync -----------------------
+\begin{frame}[fragile]{Rsync}
+  Usa \texttt{rsync -a} para sincronizar carpetas entre dispositivos.
+  \begin{minted}{bash}
+    # desde local hasta remoto (subir datos)
+    $ rsync -a datos pi@10.0.0.21:~/datos/
+  \end{minted}
+  Esto es útil para copiar datos de simulación o de análisis que se hagan de forma remota.
+  \begin{minted}{bash}
+    # desde remoto hasta local (bajar datos)
+    $ rsync -a pi@10.0.0.21:~/datos/ datos/
+  \end{minted}
+\end{frame}
+
 %------------------------------ rsync extra -----------------------
 \begin{frame}[fragile]{Rsync incremental}
   \begin{minted}{bash}
 $ rsync -av --delete origen/ pi@10.0.0.21:~/destino/
+$ rsync -av --delete origen/ rpi21:~/destino/
   \end{minted}
   \begin{itemize}
     \item \texttt{--delete} borra en destino lo que ya no existe en origen.
@@ -27,7 +42,15 @@ $ rsync -av --delete origen/ pi@10.0.0.21:~/destino/
 \end{frame}
 
 %------------------------------ ping parallel ----------------------
-\begin{frame}[fragile]{Ping en paralelo}
+\begin{frame}[fragile]{Ping a todo}
+  En serie: 
+  \begin{minted}{bash}
+for host in {1..254}; do
+  ping -c1 -W1 "10.0.0.$host"
+done
+wait
+  \end{minted}
+En paralelo: 
   \begin{minted}{bash}
 for host in {1..254}; do
   ping -c1 -W1 "10.0.0.$host" &
@@ -49,44 +72,6 @@ done
     \item Las comillas dobles preservan espacios si los hay.
     \item Añade más elementos y ejecuta de nuevo el ciclo.
   \end{itemize}
-  \begin{center}
-    \includegraphics[width=.4\textwidth]{example-image-b}
-  \end{center}
-\end{frame}
-
-%------------------------------ condicionales demo -----------------
-\begin{frame}[fragile]{Prueba rápida de condicionales}
-  \begin{minted}{bash}
-$ bash test_file.sh notas.txt
-  \end{minted}
-  Crea el script anterior y ejecuta distintos argumentos:
-  \begin{itemize}
-    \item Un archivo que exista.
-    \item Un directorio.
-    \item Un nombre inexistente.
-  \end{itemize}
-  Observa los mensajes que imprime.
-\end{frame}
-
-%------------------------------ objetivos --------------------------
-\begin{frame}[fragile]{Objetivos de la sesión}
-  \begin{itemize}
-    \item Comprender condicionales \texttt{if}/\texttt{elif}/\texttt{else} en Bash.
-    \item Utilizar bucles \texttt{for}, \texttt{while} y \texttt{case}.
-    \item Desarrollar \texttt{ping\_all.sh} para medir latencias en la subred.
-    \item Transferir archivos con \texttt{scp} y \texttt{rsync}, verificando integridad con \texttt{sha256sum}.
-  \end{itemize}
-\end{frame}
-
-%------------------------------ agenda -----------------------------
-\begin{frame}[fragile]{Agenda (10:45 – 13:00)}
-  \begin{enumerate}
-    \item Condicionales en Bash: \texttt{if}, \texttt{elif}, \texttt{else}.
-    \item Bucles \texttt{for}, \texttt{while} y estructura \texttt{case}.
-    \item Script \texttt{ping\_all.sh} para recorrer una subred.
-    \item Copiar y sincronizar datos con \texttt{scp}/\texttt{rsync}.
-    \item Verificar archivos con \texttt{sha256sum}.
-  \end{enumerate}
 \end{frame}
 
 %------------------------------ condicionales ----------------------
@@ -106,52 +91,6 @@ fi
   \begin{infobox}
   Las expresiones entre corchetes \texttt{[ ]} admiten comparaciones de cadenas (\texttt{=}, \texttt{!=}) y números (\texttt{-lt}, \texttt{-eq}, etc.).
   \end{infobox}
-\end{frame}
-
-%------------------------------ bucles -----------------------------
-\begin{frame}[fragile]{Bucles \texttt{for} y \texttt{while}}
-  \begin{minted}{bash}
-# Recorre direcciones IP de 1 a 254
-for host in {1..254}; do
-  ip="10.0.0.$host"
-  ping -c1 -W1 $ip &> /dev/null && echo "$ip activo"
-done
-
-# Cuenta de 0 a 4 con while
-i=0
-while [ $i -lt 5 ]; do
-  echo "Número $i"
-  ((i++))
-done
-  \end{minted}
-  \begin{infobox}
-  Utiliza \texttt{case} para múltiples posibilidades:
-  \begin{minted}{bash}
-case "$1" in
-  start) echo "Arrancando";;
-  stop)  echo "Deteniendo";;
-  *)     echo "Uso: $0 {start|stop}";;
-esac
-  \end{minted}
-  \end{infobox}
-\end{frame}
-
-%------------------------------ ping_all ---------------------------
-\begin{frame}[fragile]{Script \texttt{ping\_all.sh}}
-  \begin{minted}{bash}
-#!/usr/bin/env bash
-network="10.0.0"
-for host in {1..254}; do
-  ip="$network.$host"
-  if ping -c1 -W1 "$ip" &> /dev/null; then
-    rtt=$(ping -c1 -W1 "$ip" | grep -oP 'time=\K[\d.]+')
-    echo "$ip responde en ${rtt} ms"
-  fi
-done
-  \end{minted}
-  \begin{warnbox}
-  Ejecutar el script en paralelo con varios grupos puede generar tráfico intenso; coordina con tu instructor.
-  \end{warnbox}
 \end{frame}
 
 %------------------------------ transferencia ---------------------
@@ -187,9 +126,9 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  archivo.txt
   \begin{enumerate}
     \item Implementa y ejecuta \texttt{ping\_all.sh} en tu subred.
     \item Prueba la variante en paralelo y compara el tiempo de ejecución.
-    \item Copia un archivo de al menos 10 MB a tu Pi usando \texttt{scp} y mide el tiempo.
+    \item Copia un archivo de al menos 10 MB a tu Pi usando \texttt{scp} y mide el tiempo.
     \item Repite la copia con \texttt{rsync} y compara tiempos.
-    \item Verifica los hashes SHA‑256 para confirmar integridad.
+    \item Verifica los hashes SHA-256 para confirmar integridad.
   \end{enumerate}
 \end{frame}
 
