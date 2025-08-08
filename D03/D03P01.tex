@@ -3,10 +3,10 @@
 \input{../preamble.tex}
 \usepackage{mwe}
 
-\title[ClústerLab • Día 3]{Gestión del sistema y diagnóstico}
-\subtitle{Hostnames, usuarios y sincronización de reloj}
+\title[ClústerLab • Día 3]{Lo escencial en Python}
+\subtitle{Codigos simples, distribuir carga}
 \author{Equipo docente ClústerLab}
-\date{8 de agosto de 2025}
+\date{8 de agosto de 2025}
 
 \begin{document}
 
@@ -15,123 +15,322 @@
   \titlepage
 \end{frame}
 
-%------------------------------ comprobar hora --------------------
-\begin{frame}[fragile]{Verificar fecha y hora}
-  \begin{minted}{bash}
-$ date
-  \end{minted}
-  Asegúrate de que la zona horaria mostrada sea la configurada. En caso contrario repite los pasos de \texttt{timedatectl}.
+%---------------------------- OBJETIVOS ----------------------------
+\begin{frame}{Objetivos de la sesión}
+\begin{itemize}
+  \item Entender lo esencial de Python 3: variables, tipos, control de flujo, funciones, listas y diccionarios.
+  \item Ejecutar scripts en terminal (Linux/WSL) y usar un entorno virtual simple.
+  \item Ver un ejemplo \textbf{muy simple} de paralelismo con \texttt{concurrent.futures.ProcessPoolExecutor}.
+  \item Mostrar mini-ejemplos \emph{orientados a carrera}: Biomédica, Telecomunicaciones, Mecatrónica y Física.
+  \item Dejar tareas base para complejizar luego y migrar a Leftraru (próximas sesiones).
+\end{itemize}
 \end{frame}
 
-%------------------------------ bashrc -----------------------------
-\begin{frame}[fragile]{Personalizar \texttt{.bashrc}}
-  \begin{minted}{bash}
-$ sudo -u cluster nano /home/cluster/.bashrc
-alias ll='ls -lh --color'
-  \end{minted}
-  Pide al usuario cerrar sesión y volver a entrar para aplicar los alias.
-  \begin{center}
-    \includegraphics[width=.4\textwidth]{example-image-c}
-  \end{center}
+%---------------------------- PRE-REQUISITOS ----------------------------
+\begin{frame}[fragile]{Pre-requisitos rápidos}
+\textbf{Opción WSL/Ubuntu (Windows) o Linux nativo}
+\begin{minted}{bash}
+# Ver versión de Python
+python3 --version
+
+# Crear y activar venv
+python3 -m venv .venv
+source .venv/bin/activate   # en PowerShell:  .venv\Scripts\Activate.ps1
+
+# Instalar paquetes cuando se pidan (ej: numpy, matplotlib)
+pip install --upgrade pip
+\end{minted}
 \end{frame}
 
-%------------------------------ hostname test ----------------------
-\begin{frame}[fragile]{Comprobar el nuevo hostname}
-  \begin{minted}{bash}
-$ hostname
-$ ping -c1 node01
-  \end{minted}
+%---------------------------- HOLA MUNDO ----------------------------
+\begin{frame}[fragile]{Lo mínimo indispensable}
+\begin{minted}{python}
+print("Hola, ClústerLab!")  # salida en consola
+\end{minted}
+
+\textbf{Ejecutar:}
+\begin{minted}{bash}
+python3 hola.py
+\end{minted}
+\end{frame}
+
+%---------------------------- VARIABLES Y TIPOS ----------------------------
+\begin{frame}[fragile]{Variables y tipos comunes}
+\begin{minted}{python}
+a = 5                      # entero
+b = 2.5                    # float
+c = "ITM"                  # string
+ok = True                  # booleano
+nums = [1, 2, 3]           # lista
+punto = (3, 4)             # tupla
+info = {"curso": "D04", "anio": 2025}  # dict
+
+print(f"a={a}, b={b}, c={c}")
+print("len(nums) =", len(nums))
+print("curso:", info["curso"])
+\end{minted}
+\end{frame}
+
+%---------------------------- CONTROL DE FLUJO ----------------------------
+\begin{frame}[fragile]{Control de flujo (if / for / while)}
+\begin{minted}{python}
+x = 7
+if x % 2 == 0:
+    print("par")
+else:
+    print("impar")
+
+for k in ["a", "b", "c"]:
+    print(k)
+
+i = 0
+while i < 3:
+    print("i =", i)
+    i += 1
+\end{minted}
+\end{frame}
+
+%---------------------------- FUNCIONES ----------------------------
+\begin{frame}[fragile]{Funciones}
+\begin{minted}{python}
+def area_rectangulo(base: float, altura: float) -> float:
+    """Devuelve el área de un rectángulo."""
+    return base * altura
+
+print(area_rectangulo(3, 5))  # 15
+\end{minted}
+\end{frame}
+
+%---------------------------- LISTAS Y DICCIONARIOS ----------------------------
+\begin{frame}[fragile]{Listas y diccionarios}
+\begin{minted}{python}
+valores = [10, 20, 30]
+valores.append(40)
+cuadrados = [v*v for v in valores]  # list comprehension
+
+persona = {"nombre": "Ana", "edad": 21}
+persona["edad"] += 1
+for clave, valor in persona.items():
+    print(clave, "->", valor)
+\end{minted}
+\end{frame}
+
+%---------------------------- PLOTEO RÁPIDO ----------------------------
+\begin{frame}[fragile]{Un gráfico en 5 líneas (numpy + matplotlib)}
+\begin{minted}{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.linspace(0, 2*np.pi, 200)
+y = np.sin(2*x)
+plt.plot(x, y); plt.xlabel("x"); plt.ylabel("sin(2x)"); plt.title("Demo")
+plt.show()
+\end{minted}
+\end{frame}
+
+%---------------------------- MINI-EJERCICIOS ----------------------------
+\begin{frame}{Mini-ejercicios (10–15 min)}
+\begin{enumerate}
+  \item Escribe una función \texttt{promedio(lista)} y pruébala.
+  \item Dada una lista de números, genera otra con los pares y otra con los impares.
+  \item Crea un diccionario \texttt{\{"a":1,"b":2,...\}} y recórrelo imprimiendo \texttt{clave:valor}.
+  \item Modifica el gráfico para mostrar \texttt{cos(x)} y guarda la figura como PNG.
+\end{enumerate}
+\end{frame}
+
+%---------------------------- PARALELISMO (IDEA) ----------------------------
+\begin{frame}{Paralelismo en 3 ideas}
+\begin{itemize}
+  \item \textbf{CPU-bound} (cálculo pesado) \(\Rightarrow\) procesos (\texttt{multiprocessing}/\texttt{ProcessPoolExecutor}).
+  \item \textbf{I/O-bound} (esperas) \(\Rightarrow\) \texttt{asyncio} o \texttt{ThreadPoolExecutor}.
+  \item Hoy: un \textbf{mini} ejemplo CPU-bound con procesos.
+\end{itemize}
+\end{frame}
+
+%---------------------------- PARALELO: PI MONTE CARLO ----------------------------
+\begin{frame}[fragile]{Ejemplo paralelo: \textit{Monte Carlo} para \(\pi\)}
+\textbf{Versión secuencial:}
+\begin{minted}{python}
+import random, math
+
+def inside():
+    x, y = random.random(), random.random()
+    return 1 if x*x + y*y <= 1.0 else 0
+
+def pi_serial(n:int=2_000_000) -> float:
+    hits = sum(inside() for _ in range(n))
+    return 4.0 * hits / n
+
+print("pi ~", pi_serial(1_000_000))
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Mismo cálculo con procesos (paralelo)}
+\begin{minted}{python}
+from concurrent.futures import ProcessPoolExecutor
+import os, time
+
+def count_hits(m:int) -> int:
+    import random
+    h = 0
+    for _ in range(m):
+        x, y = random.random(), random.random()
+        h += 1 if x*x + y*y <= 1.0 else 0
+    return h
+
+def pi_parallel(n:int=2_000_000, workers:int=os.cpu_count()) -> float:
+    chunk = n // workers
+    with ProcessPoolExecutor(max_workers=workers) as ex:
+        parts = list(ex.map(count_hits, [chunk]*workers))
+    hits = sum(parts)
+    return 4.0 * hits / (chunk*workers)
+
+t0=time.perf_counter(); p=pi_parallel(2_000_000); dt=time.perf_counter()-t0
+print(f"pi ~ {p:.6f}  (workers={os.cpu_count()}, {dt:.3f}s)")
+\end{minted}
+\end{frame}
+
+%---------------------------- EXPLICACIÓN BREVE ----------------------------
+\begin{frame}{¿Qué está pasando?}
+\begin{itemize}
+  \item Dividimos \(N\) puntos en \(\texttt{workers}\) partes.
+  \item Cada proceso \(\to\) calcula \# de aciertos en su porción (independiente).
+  \item Sumamos resultados \(\to\) estimador de \(\pi\).
+  \item Ventaja: \textbf{CPUs múltiples} trabajan en paralelo. 
+  \item Nota: Cuidado con \textit{overhead} de procesos y tamaño de tareas.
+\end{itemize}
+\end{frame}
+
+%---------------------------- ORIENTADO A CARRERAS ----------------------------
+\begin{frame}{Snippets por área (para enganchar interés)}
+Cuatro \textbf{códigos ultra simples} que luego escalaremos:
+\begin{enumerate}
+  \item Ingeniería Biomédica: Suavizado de señal 1D (ventana móvil).
+  \item Telecomunicaciones: Promedio de potencia por antena (diccionarios).
+  \item Mecatrónica: Lectura de sensor simulado y control ON/OFF.
+  \item Física: Caminata aleatoria y distribución de posiciones.
+\end{enumerate}
+\end{frame}
+
+%---------------------------- BIOMÉDICA ----------------------------
+\begin{frame}[fragile]{Ingeniería Biomédica — Suavizado (moving average)}
+\begin{minted}{python}
+import numpy as np
+
+def moving_average(x, w=5):
+    x = np.asarray(x, dtype=float)
+    w = max(1, int(w))
+    kernel = np.ones(w)/w
+    # 'same' mantiene largo; borde simple
+    return np.convolve(x, kernel, mode='same')
+
+# Demo con señal ruidosa sintética
+t = np.linspace(0, 1, 200)
+ecg = 1.0*np.sin(2*np.pi*5*t) + 0.3*np.random.randn(t.size)
+ecg_suave = moving_average(ecg, w=7)
+\end{minted}
+\end{frame}
+
+%---------------------------- TELECOM ----------------------------
+\begin{frame}[fragile]{Telecomunicaciones — Agregar por antena}
+\begin{minted}{python}
+registros = [
+  {"antena":"A","rssi":-60},
+  {"antena":"B","rssi":-70},
+  {"antena":"A","rssi":-62},
+  {"antena":"B","rssi":-68},
+]
+
+acum = {}
+cont = {}
+for r in registros:
+    a = r["antena"]
+    acum[a] = acum.get(a, 0) + r["rssi"]
+    cont[a] = cont.get(a, 0) + 1
+
+prom = {a:acum[a]/cont[a] for a in acum}
+print(prom)  # {'A': -61.0, 'B': -69.0}
+\end{minted}
+\end{frame}
+
+%---------------------------- MECATRÓNICA ----------------------------
+\begin{frame}[fragile]{Mecatrónica — Control ON/OFF (simulación sencilla)}
+\begin{minted}{python}
+setpoint = 25.0
+lecturas = [23.0, 23.5, 24.0, 24.7, 25.2, 25.6, 24.9, 24.7]
+salidas = []
+
+for temp in lecturas:
+    if temp < setpoint - 0.2:
+        accion = "ENCENDER"  # calentar
+    elif temp > setpoint + 0.2:
+        accion = "APAGAR"
+    else:
+        accion = "MANTENER"
+    salidas.append(accion)
+
+print(salidas)
+\end{minted}
+\end{frame}
+
+%---------------------------- FÍSICA ----------------------------
+\begin{frame}[fragile]{Física — Caminata aleatoria 1D}
+\begin{minted}{python}
+import random
+
+def random_walk(n=1000):
+    x = 0
+    tray = [x]
+    for _ in range(n):
+        x += 1 if random.random() < 0.5 else -1
+        tray.append(x)
+    return tray
+
+tray = random_walk(1000)
+print("pos final:", tray[-1])
+\end{minted}
+\end{frame}
+
+%---------------------------- EJECUCIÓN Y ARCHIVOS ----------------------------
+\begin{frame}[fragile]{Cómo ejecutar y organizar (WSL/Linux)}
+\begin{minted}{bash}
+# Ejecutar un script
+python3 script.py
+
+# Guardar/leer datos simples (CSV)
+python3 - << 'PY'
+import csv
+rows = [{"t":0, "y":1.0}, {"t":1, "y":1.5}]
+with open("datos.csv","w", newline="") as f:
+    w = csv.DictWriter(f, fieldnames=["t","y"])
+    w.writeheader(); w.writerows(rows)
+print("Escribí datos.csv")
+PY
+\end{minted}
+\end{frame}
+
+%---------------------------- TAREA BASE ----------------------------
+\begin{frame}{Tarea base (para la próxima)}
+\begin{itemize}
+  \item Elige uno de los cuatro \textbf{snippets por área} y:
   \begin{itemize}
-    \item El comando \texttt{hostname} debe mostrar el nombre elegido.
-    \item Si \texttt{/etc/hosts} está correcto, el ping se resolverá localmente.
+    \item Refactoriza en funciones limpias.
+    \item Añade \textbf{tests} mínimos (incluso \texttt{assert} simples).
+    \item Genera un gráfico o salida tabular (según corresponda).
   \end{itemize}
+  \item Mide tiempo de ejecución con \texttt{time.perf\_counter()}.
+  \item \textbf{Bonus}: intenta paralelizar algo si tiene sentido (p.ej., evaluar varias ventanas en paralelo).
+\end{itemize}
 \end{frame}
 
-%------------------------------ objetivos --------------------------
-\begin{frame}[fragile]{Objetivos de la sesión}
-  \begin{itemize}
-    \item Personalizar el nombre de tu Raspberry Pi y crear un usuario dedicado al clúster.
-    \item Configurar la zona horaria y sincronizar la hora del sistema.
-    \item Conocer las herramientas básicas de diagnóstico del sistema.
-  \end{itemize}
+%---------------------------- CIERRE ----------------------------
+\begin{frame}{Cierre y próximos pasos}
+\begin{itemize}
+  \item Ya tienes lo esencial de Python 3 y \emph{un} ejemplo con procesos.
+  \item Próximas sesiones: empaquetar, automatizar y escalar al clúster (Leftraru).
+  \item Mantén los scripts simples, \textbf{medibles} y con salidas claras (gráficos/CSV).
+\end{itemize}
 \end{frame}
 
-%------------------------------ agenda -----------------------------
-\begin{frame}[fragile]{Agenda (09:00 – 10:30)}
-  \begin{enumerate}
-    \item Revisión breve y retos del día.
-    \item Cambiar \texttt{/etc/hostname} y actualizar \texttt{/etc/hosts}.
-    \item Crear usuario \texttt{cluster} y asignar privilegios.
-    \item Ajustar la zona horaria con \texttt{timedatectl} y habilitar sincronización.
-  \end{enumerate}
-\end{frame}
-
-%------------------------------ hostname ---------------------------
-\begin{frame}[fragile]{Cambiar el nombre del host}
-  Define un nombre único para cada nodo:
-  \begin{minted}{bash}
-$ sudo hostnamectl set-hostname node01
-$ sudo nano /etc/hosts
-127.0.1.1    node01
-  \end{minted}
-  Reinicia la sesión para aplicar cambios:
-  \begin{minted}{bash}
-$ exec bash
-  \end{minted}
-  \begin{infobox}
-  Utiliza un esquema consistente (\texttt{node01}, \texttt{node02}, …) para simplificar la administración y uso de \texttt{ssh}.
-  \end{infobox}
-\end{frame}
-
-%------------------------------ usuario cluster ---------------------
-\begin{frame}[fragile]{Crear usuario dedicado}
-  Para separar tareas de administración y experimentación:
-  \begin{minted}{bash}
-$ sudo adduser cluster
-$ sudo usermod -aG sudo cluster
-$ sudo passwd cluster
-  \end{minted}
-  \begin{itemize}
-    \item El grupo \texttt{sudo} otorga privilegios administrativos.
-    \item Trabaja habitualmente con el usuario \texttt{cluster} y emplea \texttt{sudo} sólo cuando sea necesario.
-  \end{itemize}
-\end{frame}
-
-%------------------------------ sincronización ---------------------
-\begin{frame}[fragile]{Sincronizar zona horaria y reloj}
-  Configura la zona horaria adecuada y activa NTP:
-  \begin{minted}{bash}
-$ timedatectl list-timezones | grep America/Santiago
-$ sudo timedatectl set-timezone America/Santiago
-$ sudo timedatectl set-ntp true
-$ timedatectl status
-  \end{minted}
-  \begin{infobox}
-  Un reloj sincronizado evita errores en Slurm y certificados SSL. Verifica que la salida muestre \texttt{System clock synchronized: yes}.
-  \end{infobox}
-  \begin{center}
-    \includegraphics[width=.5\textwidth]{example-image}
-  \end{center}
-\end{frame}
-
-%------------------------------ revisión ---------------------------
-\begin{frame}[fragile]{Revisión breve y retos}
-  \begin{itemize}
-    \item Repasa los conceptos de redes, claves SSH y scripting vistos en los días anteriores.
-    \item Propón un reto: automatiza la creación del usuario y la configuración del hostname mediante un script.
-    \item Comparte tus soluciones con tus compañeros para mejorar juntos.
-  \end{itemize}
-\end{frame}
-
-%------------------------------ resumen ----------------------------
-\begin{frame}[fragile]{Resumen}
-  \begin{itemize}
-    \item Asignaste un nombre de host coherente y actualizaste \texttt{/etc/hosts}.
-    \item Creaste un usuario dedicado para las prácticas de clúster.
-    \item Sincronizaste la zona horaria y habilitaste la sincronización NTP.
-  \end{itemize}
-  \vspace{0.5em}
-  Con estas bases, podemos empezar a monitorear el rendimiento del sistema.
-\end{frame}
 
 \end{document}
