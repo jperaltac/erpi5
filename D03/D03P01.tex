@@ -147,6 +147,17 @@ plt.show()
 \end{itemize}
 \end{frame}
 
+%----------- CONTEXTO: MONTE CARLO π (SECUENCIAL Y EN PARALELO) --------------
+\begin{frame}{Monte Carlo para \(\pi\): por qué este ejemplo}
+\begin{itemize}
+  \item \textbf{Intención}: problema \textbf{independiente por muestra}, ideal para dividir en \emph{chunks} y sumar resultados.
+  \item \textbf{Aplicabilidad}: patrones típicos en simulación/ML: promedio de muchas corridas, estimadores por muestreo.
+  \item \textbf{Claves}: semillas por proceso para reproducibilidad; balancear tamaño de \emph{chunk} vs costo de crear procesos.
+  \item \textbf{A futuro}: medir \textit{speedup} y \textit{scaling}; convertir el cuerpo de trabajo en \texttt{srun} sobre múltiples nodos.
+\end{itemize}
+\end{frame}
+
+
 %---------------------------- PARALELO: PI MONTE CARLO ----------------------------
 \begin{frame}[fragile]{Ejemplo paralelo: \textit{Monte Carlo} para \(\pi\)}
 \textbf{Versión secuencial:}
@@ -212,6 +223,16 @@ Cuatro \textbf{códigos ultra simples} que luego escalaremos:
 \end{enumerate}
 \end{frame}
 
+%---------------------- CONTEXTO: BIOMÉDICA (SUAVIZADO) -----------------------
+\begin{frame}{Biomédica — Por qué un promedio móvil}
+\begin{itemize}
+  \item \textbf{Intención}: reducir ruido de alta frecuencia para resaltar morfología (p.~ej., ondas ECG/PPG) sin sobrecargar teoría.
+  \item \textbf{Aplicabilidad}: pre-procesamiento rápido antes de detección de picos, segmentación o cálculo de HR/HRV.
+  \item \textbf{Claves}: elegir ventana \texttt{w} según frecuencia de muestreo; bordes (\texttt{mode='same'}) y \emph{latencia}.
+  \item \textbf{A futuro}: comparar con Savitzky--Golay o filtros Butterworth (\texttt{scipy.signal}) y evaluar métricas SNR.
+\end{itemize}
+\end{frame}
+
 %---------------------------- BIOMÉDICA ----------------------------
 \begin{frame}[fragile]{Ingeniería Biomédica — Suavizado (moving average)}
 \begin{minted}{python}
@@ -229,6 +250,16 @@ t = np.linspace(0, 1, 200)
 ecg = 1.0*np.sin(2*np.pi*5*t) + 0.3*np.random.randn(t.size)
 ecg_suave = moving_average(ecg, w=7)
 \end{minted}
+\end{frame}
+
+%-------------------- CONTEXTO: TELECOM (AGREGAR POR ANTENA) ------------------
+\begin{frame}{Telecomunicaciones — Agregar métricas por antena}
+\begin{itemize}
+  \item \textbf{Intención}: agrupar registros por identificador y calcular promedios/estadísticos (RSSI, RSRP, etc.).
+  \item \textbf{Aplicabilidad}: comparar desempeño por celda/sector, detectar outliers o degradación de cobertura.
+  \item \textbf{Claves}: patrón “acumulador + contador” con \texttt{dict}; manejo de claves ausentes con \texttt{get}.
+  \item \textbf{A futuro}: migrar a \texttt{pandas} (\texttt{groupby}) y mapear a coordenadas para \textit{heatmaps} de señal.
+\end{itemize}
 \end{frame}
 
 %---------------------------- TELECOM ----------------------------
@@ -253,6 +284,16 @@ print(prom)  # {'A': -61.0, 'B': -69.0}
 \end{minted}
 \end{frame}
 
+%---------------- CONTEXTO: MECATRÓNICA (CONTROL ON/OFF) ----------------------
+\begin{frame}{Mecatrónica — Control ON/OFF con histéresis}
+\begin{itemize}
+  \item \textbf{Intención}: ilustrar un controlador básico para mantener una variable (temperatura) cerca del \textit{setpoint}.
+  \item \textbf{Aplicabilidad}: termostatos, cámaras térmicas, incubadoras; lógica de \textbf{histeresis} reduce conmutaciones.
+  \item \textbf{Claves}: definir bandas (\(\pm 0.2\)°C en el ejemplo); frecuencia de muestreo y ruido de sensor importan.
+  \item \textbf{A futuro}: extender a \textbf{PID}, saturaciones y anti-\textit{windup}; simular planta con modelos discretos.
+\end{itemize}
+\end{frame}
+
 %---------------------------- MECATRÓNICA ----------------------------
 \begin{frame}[fragile]{Mecatrónica — Control ON/OFF (simulación sencilla)}
 \begin{minted}{python}
@@ -271,6 +312,16 @@ for temp in lecturas:
 
 print(salidas)
 \end{minted}
+\end{frame}
+
+%---------------------- CONTEXTO: FÍSICA (RANDOM WALK) ------------------------
+\begin{frame}{Física — Caminata aleatoria 1D: modelo mínimo de difusión}
+\begin{itemize}
+  \item \textbf{Intención}: mostrar un proceso estocástico simple cuyo RMS crece como \(\sqrt{n}\) (difusión clásica).
+  \item \textbf{Aplicabilidad}: Browniano, polímeros, mercado simple; sirve para validar leyes de escala y CLT.
+  \item \textbf{Claves}: múltiples corridas para distribución de posiciones; fijar semilla si se requiere reproducibilidad.
+  \item \textbf{A futuro}: estimar $D$ a partir de \(\langle x^2\rangle\), extender a 2D/3D y paralelizar muchas trayectorias.
+\end{itemize}
 \end{frame}
 
 %---------------------------- FÍSICA ----------------------------
