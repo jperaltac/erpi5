@@ -14,116 +14,289 @@
   \titlepage
 \end{frame}
 
-%------------------------------ objetivos --------------------------
-\begin{frame}[fragile]{Objetivos de la sesión}
-  \begin{itemize}
-    \item Enviar el primer trabajo en lote con \texttt{sbatch}.
-    \item Consultar la cola con \texttt{squeue} y \texttt{sacct}.
-    \item Interpretar estados: \texttt{PENDING}, \texttt{RUNNING}, \texttt{COMPLETED}.
-    \item Introducir arreglos de trabajos y límites de recursos.
-  \end{itemize}
+%---------------------------- AGENDA ----------------------------
+\begin{frame}{Agenda}
+\begin{itemize}
+  \item 01 — ECG filtrado (biomédica)
+  \item 02 — Onda 2D tipo FDTD (telecom/ing.)
+  \item 03 — Brazo robótico 2D (mecatrónica)
+  \item 04 — Monte Carlo para \(\pi\) (general)
+  \item 05 — Difusión 2D (física/ing.)
+  \item 06 — CNN imágenes (TensorFlow)
+  \item 07 — N-body \(O(N^2)\) (física)
+  \item Cierre: parámetros y comparación
+\end{itemize}
 \end{frame}
 
-%------------------------------ agenda -----------------------------
-\begin{frame}[fragile]{Agenda (11:30 – 13:00)}
-  \begin{enumerate}
-    \item Script \texttt{sbatch} mínimo.
-    \item Opciones comunes: \texttt{-p}, \texttt{-N}, \texttt{-n}, \texttt{--mem}, \texttt{--time}.
-    \item Seguimiento con \texttt{squeue} y \texttt{sacct}.
-    \item Ejemplo Python: calcular \(\pi\) con Monte‑Carlo.
-    \item Actividad práctica grupal.
-  \end{enumerate}
+%================================================================
+\section{01 — ECG filtrado}
+%================================================================
+
+\begin{frame}{Propósito y contexto}
+\begin{itemize}
+  \item Generar una señal ECG sintética ruidosa y aplicar \textbf{dos filtros}:
+  media móvil y pasa-bajos por FFT.
+  \item \textbf{Objetivo de benchmark:} escalar longitud de la señal (\texttt{--size})
+  y medir el tiempo por etapa.
+  \item \textbf{Aplicación:} preprocesamiento en biomédica (limpieza de señal).
+\end{itemize}
 \end{frame}
 
-%------------------------------ sbatch script ----------------------
-\begin{frame}[fragile]{Script \texttt{hello.slurm}}
-  \begin{minted}[bgcolor=gray!15]{bash}
-#!/usr/bin/env bash
-#SBATCH -p main      # partición
-#SBATCH -N 1         # nodos
-#SBATCH -n 4         # tareas
-#SBATCH --time=01:00 # límite
-#SBATCH --job-name=hello
+\begin{frame}[fragile]{Fragmento de código clave}
+\begin{minted}{python}
+def moving_average(x, w=21):
+    import numpy as np
+    kernel = np.ones(w)/w
+    return np.convolve(x, kernel, mode='same')
 
-hostname
-sleep 5
-  \end{minted}
-  Enviar con:
-  \begin{minted}{bash}
-$ sbatch hello.slurm
-  \end{minted}
+def lowpass_fft(x, fs, cutoff=20.0):
+    import numpy as np
+    n = x.size
+    freqs = np.fft.rfftfreq(n, d=1.0/fs)
+    X = np.fft.rfft(x)
+    X[freqs > cutoff] = 0
+    return np.fft.irfft(X, n=n)
+\end{minted}
 \end{frame}
 
-%------------------------------ squeue -----------------------------
-\begin{frame}[fragile]{Monitorear la cola}
-  \begin{minted}{bash}
-$ squeue -u $USER
-JOBID PARTITION NAME  USER  ST TIME  NODES NODELIST(REASON)
-123   main      hello jper  PD 0:00  1     (Resources)
-  \end{minted}
-  \begin{itemize}
-    \item Estado \texttt{PD}: pendiente. \texttt{R}: ejecutándose.
-  \end{itemize}
+\begin{frame}{Importancia y benchmarks}
+\begin{itemize}
+  \item Evalúa \textbf{costos de convolución y FFT} al crecer \texttt{--size}.
+  \item Métrica: tiempo por etapa (\texttt{generate}, \texttt{moving\_average}, \texttt{fft\_lowpass}).
+  \item Resultado esperado: \(\text{FFT} \sim O(n \log n)\), media móvil \(\sim O(n)\).
+\end{itemize}
 \end{frame}
 
-%------------------------------ sacct ------------------------------
-\begin{frame}[fragile]{Resumen de uso con \texttt{sacct}}
-  \begin{minted}{bash}
-$ sacct -j 123 --format=JobID,State,Elapsed,MaxRSS
-  \end{minted}
-  Útil para facturación y análisis de memoria.
+%================================================================
+\section{02 — Onda 2D tipo FDTD}
+%================================================================
+
+\begin{frame}{Propósito y contexto}
+\begin{itemize}
+  \item Evolución simplificada de una onda 2D con esquema de 5 puntos.
+  \item \textbf{Objetivo de benchmark:} variar \texttt{--n} (tamaño de malla) y \texttt{--steps}.
+  \item \textbf{Aplicación:} prototipos de propagación EM/acústica (telecom/ing.).
+\end{itemize}
 \end{frame}
 
-%------------------------------ array ------------------------------
-\begin{frame}[fragile]{Arreglos de trabajos}
-  \begin{minted}{bash}
-$ sbatch --array=1-10%3 pi_mc.slurm
-  \end{minted}
-  Ejecuta 10 réplicas Monte‑Carlo, max 3 simultáneas.
+\begin{frame}[fragile]{Fragmento de código clave}
+\begin{minted}{python}
+def step_wave(u, u_prev, c2, dt2_dx2, dt2_dy2):
+    up = np.empty_like(u)
+    up[1:-1,1:-1] = (2*u[1:-1,1:-1] - u_prev[1:-1,1:-1] +
+      c2*((u[2:,1:-1]-2*u[1:-1,1:-1]+u[:-2,1:-1])*dt2_dx2 +
+          (u[1:-1,2:]-2*u[1:-1,1:-1]+u[1:-1,:-2])*dt2_dy2))
+    up[0,:]=up[-1,:]=up[:,0]=up[:,-1]=0
+    return up
+\end{minted}
 \end{frame}
 
-%------------------------------ python pi --------------------------
-\begin{frame}[fragile]{Ejemplo Python: \(\pi\) Monte‑Carlo}
-  \begin{minted}[bgcolor=gray!15]{python}
-import random, sys
-N = int(sys.argv[1])
-inside = sum((random.random()**2 + random.random()**2) < 1 for _ in range(N))
-print(4 * inside / N)
-  \end{minted}
-  Script \texttt{pi.slurm}:
-  \begin{minted}[bgcolor=gray!15]{bash}
-#!/usr/bin/env bash
-#SBATCH -p main -n 1 -t 00:02:00 -o pi_%A_%a.out
-python3 pi.py 1000000
-  \end{minted}
+\begin{frame}{Importancia y benchmarks}
+\begin{itemize}
+  \item Patrón clásico de stencil: acceso a memoria y aritmética local.
+  \item \textbf{Escalado:} cuadrático con \(\texttt{n}^2 \times \texttt{steps}\).
+  \item Medir tiempo serial vs. “trabajo paralelo por carga” (tareas independientes).
+\end{itemize}
 \end{frame}
 
-%------------------------------ actividad -------------------------
-\begin{frame}[fragile]{Actividad práctica (30 min)}
-  \begin{enumerate}
-    \item Envía \texttt{hello.slurm} y confirma ejecución.
-    \item Modifica límites de tiempo y observa el cambio en \texttt{squeue}.
-    \item Lanza un arreglo Monte‑Carlo de \(\pi\) (10 tareas).
-    \item Comparte la desviación estándar de los resultados en el canal.
-  \end{enumerate}
+%================================================================
+\section{03 — Brazo Robótico 2D}
+%================================================================
+
+\begin{frame}{Propósito y contexto}
+\begin{itemize}
+  \item Cinemática inversa planar de 2 eslabones para \textbf{muchos} objetivos.
+  \item \textbf{Objetivo de benchmark:} variar \texttt{--size} (número de objetivos) y \texttt{--workers}.
+  \item \textbf{Aplicación:} trayectoria/planeación en mecatrónica.
+\end{itemize}
 \end{frame}
 
-%------------------------------ resumen ---------------------------
-\begin{frame}[fragile]{Resumen de la sesión}
-  \begin{itemize}
-    \item \texttt{sbatch} es la puerta de entrada a Slurm.
-    \item \texttt{squeue} y \texttt{sacct} permiten diagnosticar trabajos.
-    \item Arreglos facilitan barrer parámetros.
-  \end{itemize}
+\begin{frame}[fragile]{Fragmento de código clave}
+\begin{minted}{python}
+def ik_2link(target, L1=1.0, L2=1.0):
+    import math
+    x, y = target
+    r2 = x*x + y*y
+    c2 = (r2 - L1*L1 - L2*L2) / (2*L1*L2)
+    c2 = max(-1.0, min(1.0, c2))
+    s2 = math.sqrt(max(0.0, 1.0 - c2*c2))
+    th2 = math.atan2(s2, c2)
+    k1, k2 = L1 + L2*c2, L2*s2
+    th1 = math.atan2(y, x) - math.atan2(k2, k1)
+    return th1, th2
+\end{minted}
 \end{frame}
 
-%------------------------------ recursos --------------------------
-\begin{frame}[fragile]{Recursos recomendados}
-  \begin{itemize}
-    \item \textit{Slurm Quick Start Guide} – SchedMD.
-    \item \url{https://slurm.schedmd.com/sbatch.html}.
-    \item \url{https://slurm.schedmd.com/squeue.html}.
-  \end{itemize}
+\begin{frame}{Importancia y benchmarks}
+\begin{itemize}
+  \item Problema masivo “\(\times\) muchos casos”: perfecto para \textbf{map paralelo}.
+  \item Medir aceleración con \texttt{--workers} y \texttt{--size}.
+  \item Reportar tiempo/solución y throughput (sol/s).
+\end{itemize}
+\end{frame}
+
+%================================================================
+\section{04 — Monte Carlo para \(\pi\)}
+%================================================================
+
+\begin{frame}{Propósito y contexto}
+\begin{itemize}
+  \item Estimación de \(\pi\) por \textit{Monte Carlo} con muestreo uniforme.
+  \item \textbf{Objetivo de benchmark:} variar \texttt{--n} (muestras) y \texttt{--workers}.
+  \item \textbf{Aplicación:} patrón de cómputo independiente (embarrassingly parallel).
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Fragmento de código clave}
+\begin{minted}{python}
+def hits(m):
+    import random
+    h = 0
+    rnd = random.Random()
+    for _ in range(m):
+        x, y = rnd.random(), rnd.random()
+        h += 1 if x*x + y*y <= 1.0 else 0
+    return h
+\end{minted}
+\end{frame}
+
+\begin{frame}{Importancia y benchmarks}
+\begin{itemize}
+  \item Escala casi lineal con \#procesos (overhead bajo).
+  \item Medir precisión vs. costo: error \(\sim 1/\sqrt{n}\).
+  \item Excelente demostración de speedup y eficiencia paralela.
+\end{itemize}
+\end{frame}
+
+%================================================================
+\section{05 — Difusión 2D}
+%================================================================
+
+\begin{frame}{Propósito y contexto}
+\begin{itemize}
+  \item Resolver una versión sencilla de la ecuación de difusión en 2D.
+  \item \textbf{Objetivo de benchmark:} variar \texttt{--n} y \texttt{--steps}.
+  \item \textbf{Aplicación:} transporte de calor/masa, prototipos rápidos.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Fragmento de código clave}
+\begin{minted}{python}
+def step_diff(u, alpha=0.2):
+    up = np.empty_like(u)
+    up[1:-1,1:-1] = (u[1:-1,1:-1] + alpha * (
+        u[2:,1:-1] + u[:-2,1:-1] + u[1:-1,2:] + u[1:-1,:-2]
+        - 4*u[1:-1,1:-1]))
+    up[0,:]=up[-1,:]=up[:,0]=up[:,-1]=0
+    return up
+\end{minted}
+\end{frame}
+
+\begin{frame}{Importancia y benchmarks}
+\begin{itemize}
+  \item Similar a onda 2D, pero estable y útil para validar pipelines.
+  \item Tiempo crece con área de malla \(\times\) pasos.
+  \item Benchmark “por carga” para ver escalado en procesos.
+\end{itemize}
+\end{frame}
+
+%================================================================
+\section{06 — CNN con TensorFlow}
+%================================================================
+
+\begin{frame}{Propósito y contexto}
+\begin{itemize}
+  \item Entrenamiento de una \textbf{CNN pequeña} (MNIST o datos sintéticos).
+  \item \textbf{Objetivo de benchmark:} variar \texttt{--batch}, \texttt{--epochs} y recurso (CPU/GPU).
+  \item \textbf{Aplicación:} visión computacional básica (biomédica/física/ing.).
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Fragmento de código clave}
+\begin{minted}{python}
+model = tf.keras.Sequential([
+  tf.keras.layers.Conv2D(16,3,activation='relu',input_shape=(28,28,1)),
+  tf.keras.layers.MaxPooling2D(),
+  tf.keras.layers.Conv2D(32,3,activation='relu'),
+  tf.keras.layers.MaxPooling2D(),
+  tf.keras.layers.Flatten(),
+  tf.keras.layers.Dense(64, activation='relu'),
+  tf.keras.layers.Dense(10, activation='softmax')
+])
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+\end{minted}
+\end{frame}
+
+\begin{frame}{Importancia y benchmarks}
+\begin{itemize}
+  \item Demuestra el \textbf{pipeline de datos} y el impacto de \texttt{batch size}.
+  \item Comparar CPU vs. GPU si está disponible; medir \emph{throughput} (img/s).
+  \item Opción sintética para no depender de descargas en el clúster.
+\end{itemize}
+\end{frame}
+
+%================================================================
+\section{07 — N-body \(O(N^2)\)}
+%================================================================
+
+\begin{frame}{Propósito y contexto}
+\begin{itemize}
+  \item Sistema de partículas con interacción newtoniana simplificada.
+  \item \textbf{Objetivo de benchmark:} variar \texttt{--n} (nº partículas) y \texttt{--steps}.
+  \item \textbf{Aplicación:} cargas de cómputo intensivas en física/ing.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Fragmento de código clave}
+\begin{minted}{python}
+def forces(positions, G=1.0, eps=1e-3):
+    n = positions.shape[0]
+    acc = np.zeros_like(positions)
+    for i in range(n):
+        diff = positions - positions[i]
+        r2 = (diff**2).sum(axis=1) + eps
+        inv = 1.0 / np.sqrt(r2**3)
+        inv[i] = 0.0
+        acc[i] = (G * inv)[:, None] * diff.sum(axis=0)
+    return acc
+\end{minted}
+\end{frame}
+
+\begin{frame}{Importancia y benchmarks}
+\begin{itemize}
+  \item Costo \(\sim O(N^2)\): crece muy rápido con \texttt{--n}.
+  \item Útil para mostrar cuándo \textbf{sí} conviene paralelizar y cómo trocear trabajo.
+  \item Mostrar tiempo por paso y por partícula.
+\end{itemize}
+\end{frame}
+
+%================================================================
+\section{Cierre}
+%================================================================
+
+\begin{frame}{Parámetros y comparación resumida}
+\small
+\begin{itemize}
+  \item \textbf{01 ECG:} \texttt{--size} (muestras). Métricas: tiempo por filtro.
+  \item \textbf{02 Onda 2D:} \texttt{--n}, \texttt{--steps}. Stencil, memoria.
+  \item \textbf{03 IK:} \texttt{--size}, \texttt{--workers}. Throughput (sol/s).
+  \item \textbf{04 Monte Carlo:} \texttt{--n}, \texttt{--workers}. Speedup casi lineal.
+  \item \textbf{05 Difusión 2D:} \texttt{--n}, \texttt{--steps}. Estabilidad y costo.
+  \item \textbf{06 CNN TF:} \texttt{--batch}, \texttt{--epochs}. CPU vs. GPU (\emph{img/s}).
+  \item \textbf{07 N-body:} \texttt{--n}, \texttt{--steps}. Costo \(O(N^2)\).
+\end{itemize}
+\vspace{1em}
+\textbf{Recomendación de informe}: correr cada configuración 3 veces, reportar media \(\pm\) desviación, graficar \textit{speedup} y \textit{efficiency}.
+\end{frame}
+
+\begin{frame}{Siguientes pasos}
+\begin{itemize}
+  \item Integrar \texttt{sbatch/srun} en el clúster (plantillas por proyecto).
+  \item Automatizar barridos (\texttt{--n}, \texttt{--steps}, \texttt{--workers}, \texttt{--batch}).
+  \item Generar tablas/figuras comparativas y \textbf{presentación final por equipo}.
+\end{itemize}
 \end{frame}
 
 \end{document}
