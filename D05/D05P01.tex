@@ -95,7 +95,7 @@ Para acceder al Cluster:
     
     \item Utilizar comando: 
      \begin{minted}{bash}
-$ ssh -p 4603 fantastic$_$user@leftraru.nlhpc.cl
+$ ssh -p 4603 fantastic_user@leftraru.nlhpc.cl
   \end{minted}
     \item Primera conexión: Confirmar con 
     \begin{minted}{bash}
@@ -107,8 +107,9 @@ $ ssh -p 4603 fantastic$_$user@leftraru.nlhpc.cl
             \item Putty
         \end{itemize}
     \end{itemize}
-    \centering
-    \includegraphics[scale=0.3]{FIGURES/ssh_2.png}
+\begin{center}
+\includegraphics[scale=0.3]{FIGURES/ssh_2.png}
+\end{center}
      \vspace{0.5em}
 \end{frame}
 
@@ -117,8 +118,9 @@ $ ssh -p 4603 fantastic$_$user@leftraru.nlhpc.cl
 \begin{itemize}
     \item Una vez entren al Cluster verán algo como esto: 
 \end{itemize}
-\centering
+\begin{center}
 \includegraphics[scale=0.2]{FIGURES/log_in_1.png}
+\end{center}
  \vspace{0.5em}
    %  {\scriptsize \texttt{Ingreso exitoso}}
 \end{frame}
@@ -163,7 +165,7 @@ $ ssh -p 4603 fantastic$_$user@leftraru.nlhpc.cl
     \item Crear llave:
     \end{itemize}
     \begin{minted}{bash}
-        $ ssh-keygen -t ed25519} 
+        $ ssh-keygen -t ed25519
         $ 3 enter
     \end{minted}
     
@@ -172,7 +174,7 @@ $ ssh -p 4603 fantastic$_$user@leftraru.nlhpc.cl
     \end{itemize}
 
 \begin{minted}{bash}
-$ ssh-copy-id -p 4603 fantastic$_$user@leftraru.nlhpc.cl
+$ ssh-copy-id -p 4603 fantastic_user@leftraru.nlhpc.cl
     \end{minted}
 \begin{itemize}
     \item Solicita Clave acceso
@@ -188,7 +190,7 @@ $ ssh-copy-id -p 4603 fantastic$_$user@leftraru.nlhpc.cl
 \frametitle{\textbf{Traspaso Archivos desde/al Cluster}}
 Sintáxis Básica: \\
 \begin{minted}{bash}
-    $   {scp  [opciones] origen destino} \\
+    $   scp  [opciones] origen destino
 \end{minted}
 \vspace{0.5em}
 Opciones comunes:
@@ -211,8 +213,8 @@ Opciones comunes:
 \end{itemize}
 Ejemplo: \\
 \begin{minted}{bash}
-    $ scp -P 4603 /home/catalina/Descargas/archivo-descargado.dat cruiz@leftraru.nlhpc.cl: \hl{~}} \\
-    $ scp -P 4603 /home/catalina/Descargas/archivo-descargado.dat cruiz@leftraru.nlhpc.cl:\hl{/home/cruiz}
+    $ scp -P 4603 /home/catalina/Descargas/archivo-descargado.dat cruiz@leftraru.nlhpc.cl: ~
+    $ scp -P 4603 /home/catalina/Descargas/archivo-descargado.dat cruiz@leftraru.nlhpc.cl:/home/cruiz
 \end{minted}
 \end{frame}
 
@@ -224,17 +226,17 @@ Ejemplo: \\
     \item Crea tu carpeta/directorio:
     \end{itemize}
     \begin{minted}{bash}
-        $  \hl{mkdir nombre-carpeta}
+        $  mkdir nombre-carpeta
     \end{minted}
    \begin{itemize}
-       \item  \item Entra a tu carpeta/directorio:
+       \item Entra a tu carpeta/directorio:
    \end{itemize}
    \begin{minted}{bash}
-       $ \hl{cd nombre-carpeta}
+       $ cd nombre-carpeta
    \end{minted}
     ¡Vamos de nuevo!
    \begin{minted}{bash}
-       $ scp -P 4603 /home/catalina/Descargas/archivo-descargado.dat cruiz@leftraru.nlhpc.cl:\hl{~/CL2025}
+       $ scp -P 4603 /home/catalina/Descargas/archivo-descargado.dat cruiz@leftraru.nlhpc.cl:~/CL2025
    \end{minted}
    \begin{itemize}
        \item Lista tu carpeta/directorio: ls 
@@ -317,8 +319,9 @@ A través de SLURM podemos lanzar \textit{jobs} hacia las distintas particiones 
 \end{frame}
 \begin{frame}[fragile]
 \frametitle{\textbf{Visualizando sinfo-a}}
-\centering
+\begin{center}
 \includegraphics[scale=0.3]{FIGURES/sinfo-a.png}
+\end{center}
 \end{frame}
 
 
@@ -333,7 +336,7 @@ A través de SLURM podemos lanzar \textit{jobs} hacia las distintas particiones 
 \end{itemize}
     Sintáxis: 
 \begin{minted}{bash}
-    $ {srun} [parámetros] \textbf{ejecutable} [argumentos]
+    $ srun [parámetros] ejecutable [argumentos]
 \end{minted}
 
    
@@ -341,8 +344,8 @@ A través de SLURM podemos lanzar \textit{jobs} hacia las distintas particiones 
 
 \begin{minted}{bash}
     $ srun hostname
-    $ srun} - p general hostname
-    $ srun} -p main -n 2 --ntask-per-node=1 hostname
+    $ srun - p general hostname
+    $ srun -p main -n 2 --ntask-per-node=1 hostname
 \end{minted}
  
 \end{frame}
@@ -357,11 +360,11 @@ A través de SLURM podemos lanzar \textit{jobs} hacia las distintas particiones 
 \end{itemize}
 
 \begin{minted}{bash}
-    $ \#\!/usr/bin/bash
-    $ echo "Este es nuestro primer script del curso SLURM "
-    $ echo
-    $ echo "Este script se ha ejecutado en el nodo \$\textbackslash(hostname)"
-    $ echo 
+    #!/usr/bin/bash
+    echo "Este es nuestro primer script del curso SLURM "
+    echo
+    echo "Este script se ha ejecutado en el nodo $HOSTNAME"
+    echo 
 \end{minted}
 
 
@@ -502,17 +505,17 @@ A través de SLURM podemos lanzar \textit{jobs} hacia las distintas particiones 
 \begin{frame}[fragile]{\textbf{Sigamos...}}
 
 
-\begin{minted}{bash}
-$ \#\!/bin/bash 
-$ \#SBATCH -J ejercicio2 
-$ \#SBATCH -p labs 
-$ \#SBATCH -t 0:15:00 
-$ \#SBATCH -o logs/ejercicio2\_\%j.out 
-$ \# ----------------Modulos---------------------------- 
-$ ml intel/2022.00
-$ ml Python/3.9.5 
-$ \# ----------------Comando-------------------------- 
-$ python simular\_consumo\_cpu.py 1
+\begin{minted}[fontsize=\tiny]{bash}
+#!/bin/bash 
+#SBATCH -J ejercicio2 
+#SBATCH -p labs 
+#SBATCH -t 0:15:00 
+#SBATCH -o logs/ejercicio2\_\%j.out 
+# ----------------Modulos---------------------------- 
+ml intel/2022.00
+ml Python/3.9.5 
+# ----------------Comando-------------------------- 
+python simular_consumo_cpu.py 1
 \end{minted}
 
 
@@ -563,13 +566,13 @@ $ python simular\_consumo\_cpu.py 1
   ml [comando]  [software[/version]] \\ 
   Comandos: \\ 
 
-  \begin{minted}{bash}
-        $ purge: Elimina módulos cargados  
-   $ avail: Lista módulos disponibles  
-     $ spider: Busca módulos disponibles según palabra clave.
-      $ software: Carga el módulo de software disponible. 
-       $ show software/version: Muestra detalles del módulo.
-  \end{minted}
+\begin{minted}{bash}
+purge: Elimina módulos cargados  
+avail: Lista módulos disponibles  
+spider: Busca módulos disponibles según palabra clave.
+software: Carga el módulo de software disponible. 
+show software/version: Muestra detalles del módulo.
+\end{minted}
 
 \end{frame}
 
@@ -577,7 +580,7 @@ $ python simular\_consumo\_cpu.py 1
     \texttt{ml} para ver módulos cargados \\ 
     \texttt{ml spider Python} para buscar módulos\\ 
 \centering
-    \includegraphics[scale=0.25]{FIGURES/ml_spider_python.png} \\
+    \includegraphics[scale=0.35]{FIGURES/ml_spider_python.png} \\
 \end{frame} 
 
 \begin{frame}[fragile]
@@ -586,11 +589,7 @@ $ python simular\_consumo\_cpu.py 1
 $ ml spider Python/3.8.2
 $ ml spider wrf
 $ ml spider WRF
-    
 \end{minted}
-
-
-
 \end{frame}
 
 \begin{frame}{fragile}
