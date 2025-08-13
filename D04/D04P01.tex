@@ -1,13 +1,11 @@
 % !TEX program = lualatex
 \documentclass[aspectratio=169,professionalfonts]{beamer}
-\usepackage{xcolor}
-\usepackage{soul}
-\sethlcolor{yellow}
 \usepackage[table]{xcolor}  % Para colores en tablas
 \usepackage{colortbl}       % Para sombreado por fila
-
-\input{../preamble.tex}
-
+\usepackage{graphicx}
+\usepackage{fancyvrb}
+\newenvironment{minted}[2][]{\VerbatimEnvironment\begin{Verbatim}[#1]}{\end{Verbatim}}
+\newcommand{\hl}[1]{\colorbox{yellow}{#1}}
 
 \title[ClústerLab • Día 5]{Introducción Slurm}
 %\subtitle{Controlador y demonios de cómputo}
@@ -277,9 +275,9 @@ Ejemplo: \\
 \end{frame}
 
 \begin{frame}{\textbf{SLURM-Gestor de Recursos}}
-A través de SLURM podemos lanzar \textit{jobs} hacia las distintas particiones de NLHPC: debug, main, general, largemem, v100, mi100 y mi210. Ejecución máxima : 30 días. \\\\ 
-\vspace{0.5em}
-¿Qué ocurre con debug ?
+ A través de SLURM podemos lanzar \textit{jobs} hacia las distintas particiones de NLHPC: debug, main, general, largemem, v100, mi100 y mi210. Ejecución máxima : 30 días. \\ 
+ \vspace{0.5em}
+ ¿Qué ocurre con debug?
     
 \end{frame}
 
@@ -481,9 +479,8 @@ A través de SLURM podemos lanzar \textit{jobs} hacia las distintas particiones 
 \texttt{\#SBATCH --mem-per-cpu=1000} \\
 \texttt{\#SBATCH -o archivo\_salida\_\%j.out} \\
 \texttt{\#SBATCH --mail-user=fantasticuser@gmail.com} \\
-\texttt{\#SBATCH --mail-type=ALL} \\
-\\
-\texttt{echo ``inicio de mi programa''} \\
+    \texttt{\#SBATCH --mail-type=ALL} \\
+    \texttt{echo ``inicio de mi programa''} \\
 \texttt{mi\_programa parametros} \\
 \texttt{echo ``fin de mi programa''} \\
 \end{frame}
