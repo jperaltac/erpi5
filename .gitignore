@@ -11,6 +11,7 @@
 *.fdb_latexmk
 *.fls
 *.pdf
+!website/static/pdfs/*.pdf
 
 # MacOS and editor files
 .DS_Store
