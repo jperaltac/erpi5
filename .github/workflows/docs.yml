@@ -28,7 +28,7 @@ jobs:
           sudo apt-get install -y --no-install-recommends \
             texlive-luatex texlive-latex-extra texlive-fonts-recommended \
             texlive-lang-spanish texlive-fonts-extra \
-            fonts-inter fonts-firacode fonts-noto-color-emoji
+            fonts-inter fonts-firacode fonts-noto-color-emoji texlive-full
           sudo fc-cache -f
           make
           mkdir -p website/static/pdfs
